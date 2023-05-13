@@ -1,0 +1,5 @@
+interpreter/.gradle
+interpreter/.idea
+interpreter/build
+interpreter/gradle
+interpreter/kotlin-js-store
