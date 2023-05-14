@@ -93,7 +93,14 @@ class Parser(private val rules: List<List<Token>>) {
                 }
             }
 
-            is AnyToken, is IdentToken, is LiteralToken, is CharacterClass -> tokens[index++]
+            is Repeated -> {
+                (tokens[index] as Repeated).child = surePopPrevious(tokens[index - 1])
+                val res = checkForRuleAndPrefix(tokens[index] as Repeated)
+                index++
+                res
+            }
+
+            is AnyToken, is IdentToken, is Literal, is CharacterClass -> tokens[index++]
             else -> throw ParserError("Unexpected token ${tokens[index]}", tokens[index].range)
         }
     }

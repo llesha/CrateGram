@@ -60,6 +60,14 @@ class ASTTransformer(val rules: MutableMap<IdentToken, Rule>) {
                 ruleName
             }
 
+            is Repeated -> {
+                val children = mutableListOf<Token>()
+                repeat(quantifier.quantity) {
+                    children.add(quantifier.child)
+                }
+                Group(children)
+            }
+
             else -> throw InterpreterError("Unexpected token $quantifier")
         }
     }

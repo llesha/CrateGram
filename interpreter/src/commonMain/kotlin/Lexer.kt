@@ -130,17 +130,20 @@ class Lexer(private val text: String) {
 
     companion object {
         val sequenceTokens = listOf<Triple<Char, Char, (String, IntRange) -> Token>>(
-            Triple('"', '"') { value: String, position: IntRange -> LiteralToken(value, position) },
+            Triple('"', '"') { value: String, position: IntRange -> Literal(value, position) },
             Triple('[', ']') { value: String, position: IntRange ->
-                CharacterClass(position, mutableListOf(LiteralToken(value, position)))
+                CharacterClass(position, mutableListOf(Literal(value, position)))
+            },
+            Triple('{', '}') { value: String, position: IntRange ->
+                Repeated(position, Literal(value))
             }
-        //Triple('\'', '\'') { value: String, position: IntRange -> RegexToken(value, position) }
         )
 
         private val groupTokens = listOf<Triple<Char, Char, (IntRange, MutableList<Token>) -> Token>>(
             Triple('(', ')') { position: IntRange, children: MutableList<Token> ->
                 Group(children, position)
-            },)
+            },
+        )
 
     }
 }

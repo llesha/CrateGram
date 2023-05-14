@@ -67,6 +67,7 @@ class LexerTest {
             Expr    = Sum
             Product = Power (("*" | "/") Power)*
             Value   = [0-9]+ | "(" Expr ")"
+            Test    = "A" / &Value{3}
             """
         )
         val tokens = lexer.tokenize()

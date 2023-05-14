@@ -16,13 +16,13 @@ abstract class Token(val symbol: String, var range: IntRange) {
     }
 
     companion object {
-        fun empty() = LiteralToken("")
+        fun empty() = Literal("")
     }
 }
 
 abstract class OneChildToken(symbol: String, range: IntRange, var child: Token): Token(symbol, range)
 
-class LiteralToken(symbol: String, range: IntRange = -1..-1) : Token(symbol, range), Terminal {
+class Literal(symbol: String, range: IntRange = -1..-1) : Token(symbol, range), Terminal {
     override fun toString(): String = """"$symbol""""
 }
 
