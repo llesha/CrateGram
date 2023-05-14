@@ -14,30 +14,23 @@ abstract class Token(val symbol: String, var range: IntRange) {
             return false
         return symbol == (other as Token).symbol
     }
+
+    companion object {
+        fun empty() = LiteralToken("")
+    }
 }
 
 abstract class OneChildToken(symbol: String, range: IntRange, var child: Token): Token(symbol, range)
 
-@Deprecated("Regex tokens no longer supported")
-class RegexToken(symbol: String, range: IntRange) : Token(symbol, range) {
-    private val regex: Regex
-
-    init {
-        regex = Regex(symbol)
-    }
-
-    override fun toString(): String = "/$symbol/"
-}
-
-class LiteralToken(symbol: String, range: IntRange) : Token(symbol, range), Terminal {
+class LiteralToken(symbol: String, range: IntRange = -1..-1) : Token(symbol, range), Terminal {
     override fun toString(): String = """"$symbol""""
 }
 
 /**
  * root - is a starting rule
  */
-class IdentToken(symbol: String, range: IntRange) : Token(symbol, range), Terminal
+class IdentToken(symbol: String, range: IntRange = -1..-1) : Token(symbol, range), Terminal
 
 class AnyToken(range: IntRange) : Token(".", range), Terminal
 
-class TempToken(symbol: String, range: IntRange = 0..0) : Token(symbol, range)
+class TempToken(symbol: String, range: IntRange = -1..-1) : Token(symbol, range)

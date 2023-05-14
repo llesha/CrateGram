@@ -1,6 +1,6 @@
 package token
 
-abstract class Prefix(symbol: String, position: IntRange, var child: Token) : Token(symbol, position)
+abstract class Prefix(symbol: String, position: IntRange, child: Token) : OneChildToken(symbol, position, child)
 
 class AndPredicate(position: IntRange, child: Token) : Prefix("&", position, child) {
     override fun toString(): String = "&$child"

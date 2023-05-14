@@ -1,6 +1,6 @@
 package token
 
-abstract class Suffix(symbol: String, position: IntRange, var child: Token) : Token(symbol, position)
+abstract class Suffix(symbol: String, position: IntRange, child: Token) : OneChildToken(symbol, position, child)
 
 class Star(position: IntRange, child: Token) : Suffix("*", position, child) {
     override fun toString(): String = "$child*"

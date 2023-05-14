@@ -19,9 +19,7 @@ import token.*
  *
  */
 class Lexer(private val text: String) {
-    val rules = mutableListOf<RuleWithName>()
     private var index: Int = 0
-    private val tokens = mutableListOf<Token>()
 
     private val tempTokens = mutableSetOf(
         '(', ')',
@@ -36,10 +34,7 @@ class Lexer(private val text: String) {
             res.last().add(tokenizeNext() ?: break)
             if (res.last().last().symbol == "=") {
                 val equalSign = res.last().removeLast()
-                val prev = res.last().removeLastOrNull() ?: throw LexerError(
-                    "Expected token before =",
-                    equalSign.position.first
-                )
+                val prev = res.last().removeLastOrNull() ?: throw LexerError("Expected token before =", equalSign.range)
                 res.add(mutableListOf(prev, equalSign))
             }
         }
@@ -61,10 +56,9 @@ class Lexer(private val text: String) {
             '<' -> if (index + 1 < text.length && text[index + 1] == '-') {
                 index++
                 TempToken("=", index - 1..index++)
-            } else throw LexerError("Untokenized input ${text[index]}", index)
+            } else throw LexerError("Untokenized input ${text[index]}", position = index)
 
-
-            else -> throw LexerError("Untokenized input ${text[index]}", index)
+            else -> throw LexerError("Untokenized input ${text[index]}", position = index)
         }
     }
 
@@ -76,168 +70,16 @@ class Lexer(private val text: String) {
                 return tokenClass(tokenValue, startIndex until index)
             }
         }
-        val identRegex = Regex("[a-zA-Z]+")
+        val identRegex = Regex("[\\w]+")
         if (text[index].toString().matches(identRegex)) {
             val tokenValue = getTextWhileMatches(identRegex)
             return IdentToken(tokenValue, startIndex..index)
         }
         return null
-    }
-
-    fun step() {
-        while (true) {
-            val next = parseNext('#') ?: break
-            tokens.add(next)
-        }
-        var lastRule: RuleWithName? = null
-        tokens.forEach {
-            if (it is RuleWithName) {
-                rules.add(it)
-                lastRule = it
-            } else {
-                lastRule?.rule?.children?.add(it) ?: throw PosError("Expected rule, got $it", index)
-            }
-        }
-        tokens.clear()
-    }
-
-    private fun nextChar(): Char {
-        index++
-        if (index >= text.length)
-            throw PosError("Unexpected end of text", index)
-        return text[index]
-    }
-
-    private fun getTokensUntil(condition: Char): Int {
-        val res = tokens.lastIndex
-        skipWhitespace()
-
-        var token: Token? = parseNext(condition)
-        while (token != null) {
-            tokens.add(token)
-            token = parseNext(condition)
-            // empty block
-        }
-        skipWhitespace()
-        if (text[index] != condition)
-            throw PosError("Expected $condition", index)
-        index++
-        return res
-    }
-
-    private fun parseNext(condition: Char): Token? {
-        skipWhitespace()
-        if (index >= text.length)
-            return null
-        val startIndex = index + 1
-
-        parseSequences(startIndex).ifNotNull { return this }
-
-        when (text[index]) {
-            '|' -> {
-                val next = sureParseNext(condition)
-                val prev = surePopPrevious()
-                if (prev is RuleWithName) {
-                    val token = prev.rule.children.removeLast()
-                    if (next is Or) {
-                        next.children.add(0, token)
-                        prev.rule.children.add(next)
-                    } else {
-                        prev.rule.children.add(Or(token.position.first..next.position.last, mutableListOf(token, next)))
-                    }
-                    return prev
-                }
-                if (next is Or) {
-                    next.children.add(0, prev)
-                    return next
-                }
-                return Or(prev.position.first..next.position.last, mutableListOf(prev, next))
-            }
-
-            '=' -> {
-                val next = sureParseNext(condition)
-                val prev = surePopPrevious()
-                if (next is Or) {
-                    next.children.add(0, prev)
-                    return next
-                }
-                if (prev !is IdentToken)
-                    throw PosError("Expected identifier before `=` in the rule", prev.position.last)
-                val position = prev.position.first..next.position.last
-                return RuleWithName(
-                    position, prev.symbol,
-                    Rule(position, mutableListOf(next))
-                )
-            }
-
-            // prefix operators
-            '&' -> return AndPredicate(startIndex..startIndex, sureParseNext(condition))
-            '!' -> return NotPredicate(startIndex..startIndex, sureParseNext(condition))
-
-            // suffix operators
-            '*' -> return checkForRuleAndPrefix(Star(index..index++, surePopPrevious()))
-            '+' -> return checkForRuleAndPrefix(Plus(index..index++, surePopPrevious()))
-            '?' -> return checkForRuleAndPrefix(QuestionMark(index..index++, surePopPrevious()))
-
-            condition -> return null
-        }
-        throw PosError("Unparsed token ${text[index]}", index)
-    }
-
-    private fun parseSequences(startIndex: Int): Token? {
-        for ((start, end, tokenClass) in sequenceTokens) {
-            if (text[index] == start) {
-                index++
-                val tokenValue = getTextUntil(end)
-                return tokenClass(tokenValue, startIndex until index)
-            }
-        }
-        val identRegex = Regex("[a-zA-Z]+")
-        if (text[index].toString().matches(identRegex)) {
-            val tokenValue = getTextWhileMatches(identRegex)
-            return IdentToken(tokenValue, startIndex..index)
-        }
-        for ((start, end, tokenClass) in groupTokens) {
-            if (text[index] == start) {
-                index++
-                val idx = getTokensUntil(end)
-                if (tokens.lastIndex == idx)
-                    throw PosError("Empty group $start$end", index)
-                val children = mutableListOf<Token>()
-                while (tokens.lastIndex != idx) {
-                    children.add(tokens.removeLast())
-                }
-                return tokenClass(startIndex until index, children.reversed().toMutableList())
-            }
-        }
-        return null
-    }
-
-    private fun checkForRuleAndPrefix(suffix: Suffix): Token {
-        when (suffix.child) {
-            is RuleWithName -> {
-                val rule = suffix.child as RuleWithName
-                val suffixChild = rule.rule.children.removeLast()
-                suffix.child = suffixChild
-                // suffix.child might be Prefix, it should be changed by calling method again
-                val afterChange = checkForRuleAndPrefix(suffix)
-                rule.rule.children.add(afterChange)
-                return rule
-            }
-
-            is Prefix -> {
-                val prefix = suffix.child as Prefix
-                val realChild = prefix.child
-                suffix.child = realChild
-                prefix.child = suffix
-                return prefix
-            }
-
-            else -> return suffix
-        }
     }
 
     private fun getTextUntil(condition: Char): String {
+        val startIndex = index - 1
         val res = StringBuilder()
         while (index < text.length) {
             if (text[index] == condition) {
@@ -252,7 +94,7 @@ class Lexer(private val text: String) {
             }
             index++
         }
-        throw PosError("Out of bounds while tokenizing $condition", index)
+        throw LexerError("Out of bounds while tokenizing $condition", startIndex..index)
     }
 
     private fun getTextWhileMatches(regex: Regex): String {
@@ -275,31 +117,30 @@ class Lexer(private val text: String) {
 
     private fun getByIndex(): Char {
         if (index >= text.length)
-            throw PosError("Out of bounds while lexing a token", index)
+            throw LexerError("Out of bounds while lexing a token", position = index)
         return text[index]
     }
 
-    private fun sureParseNext(condition: Char): Token {
+    private fun nextChar(): Char {
         index++
-        return parseNext(condition) ?: throw PosError("Expected valid token after |", index)
-    }
-
-    private fun surePopPrevious(): Token {
-        return tokens.removeLastOrNull() ?: throw PosError("Expected token before |", index)
+        if (index >= text.length)
+            throw LexerError("Unexpected end of text", position = index)
+        return text[index]
     }
 
     companion object {
         val sequenceTokens = listOf<Triple<Char, Char, (String, IntRange) -> Token>>(
             Triple('"', '"') { value: String, position: IntRange -> LiteralToken(value, position) },
-            Triple('\'', '\'') { value: String, position: IntRange -> RegexToken(value, position) }
+            Triple('[', ']') { value: String, position: IntRange ->
+                CharacterClass(position, mutableListOf(LiteralToken(value, position)))
+            }
+        //Triple('\'', '\'') { value: String, position: IntRange -> RegexToken(value, position) }
         )
 
         private val groupTokens = listOf<Triple<Char, Char, (IntRange, MutableList<Token>) -> Token>>(
             Triple('(', ')') { position: IntRange, children: MutableList<Token> ->
-                Group(position, children)
-            },
-            Triple('[', ']') { position: IntRange, children: MutableList<Token> ->
-                Group(position, children)
-            })
+                Group(children, position)
+            },)
+
     }
 }
