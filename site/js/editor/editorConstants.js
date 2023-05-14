@@ -177,7 +177,7 @@ const hoverHints = {
     "?": `<strong>Optional</strong> - matches the previous token<br>
     between <strong>zero</strong> and <strong>one</strong> time,<br> 
     as many times as possible`,
-    ".": `matches any token`,
+    ".": `matches any character (except line break)`,
 
     "[": classHint,
     "]": classHint,
