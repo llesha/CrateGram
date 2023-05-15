@@ -97,7 +97,7 @@ Expr    = "a" Product / Sum / Value`,
                      put between two characters<br>
                      inside the <strong>Character Class</strong>`
                 }
-                if (cont == null && value.match(/[^\w\[\]()?*+]/)) {
+                if (cont == null && value.match(/[^\w\s\[\]()?*+]/)) {
                     cont = `<strong>Invalid</strong> - this token will not <br>
                     be tokenized, remove it`
                 }

@@ -48,21 +48,15 @@ class ASTTransformer(val rules: MutableMap<IdentToken, Rule>) {
 
             is Star -> {
                 val ruleName = generateNonTerminalName(rules.keys)
-                rules[ruleName] =
-                    Rule(
-                        Or(
-                            mutableListOf(
-                                Group( /* warning: duplicating [ruleName] */mutableListOf(quantifier.child, ruleName)
-                                ), Token.empty()
-                            )
-                        )
-                    )
+                rules[ruleName] = /* warning: duplicating [ruleName] */
+                    Rule(Or(mutableListOf(Group(mutableListOf(quantifier.child, ruleName)), Token.empty())))
                 ruleName
             }
 
             is Repeated -> {
                 val children = mutableListOf<Token>()
                 repeat(quantifier.quantity) {
+                    /* warning: duplicating [quantifier.child] */
                     children.add(quantifier.child)
                 }
                 Group(children)
