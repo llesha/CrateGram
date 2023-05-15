@@ -1,0 +1,9 @@
+<svg width="150" height="100" viewBox="0 0 15 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="15" height="10" stroke-width="1" stroke="var(--color-fg-muted)" fill-opacity="0" />
+    <text x="50%" y="36%" dominant-baseline="middle" text-anchor="middle" font-size="3" font-family="Fira Code" fill="var(--color-fg-default)">Crate</text>
+    <text x="50%" y="66%" dominant-baseline="middle" text-anchor="middle" font-size="3" font-family="Fira Code" fill="var(--color-fg-default)">Gram</text>
+    <rect x="0" y="0" fill="var(--color-fg-muted)" width="1.5" height="1.5"></rect>
+    <rect x="13.5" y="0" fill="var(--color-fg-muted)" width="1.5" height="1.5"></rect>
+    <rect x="13.5" y="8.5" fill="var(--color-fg-muted)" width="1.5" height="1.5"></rect>
+    <rect x="0" y="8.5" fill="var(--color-fg-muted)" width="1.5" height="1.5"></rect>
+</svg>
