@@ -17,7 +17,7 @@ defined after `=` or `<-`[^1] symbol in the rule.
 |--------------------------|------------|--------------------------------------------------------------------------------------------------------|
 | `' '` or `" "`           | 5          | Literal string                                                                                         |
 | `[ ]`                    | 5          | Character class - matches a single character from set. Can use range[^2]                               | 
-| `.`                      | 5          | Any character - matches any character expect line break                                                | 
+| `.`                      | 5          | Any character - matches any character except line break                                                | 
 | `(e)`                    | 5          | Grouping - groups tokens into one                                                                      | 
 | `e?`                     | 4          | Optional - matches the previous token between zero and one time, as many times as possible             | 
 | `e*`                     | 4          | Zero-or-more - matches the previous token  between zero and unlimited times, as many times as possible | 
@@ -27,7 +27,8 @@ defined after `=` or `<-`[^1] symbol in the rule.
 | `!e`                     | 3          | Not-predicate - requires following token to be absent, does not consume it                             | 
 | `e1 e2`                  | 2          | Sequence - matches a sequence of terminals or non-terminals                                            |
 | `e1 / e2`  or `e1 \| e2` | 1          | Prioritized Choice - equivalent to boolean OR                                                          |
-| `# comment`              | -          | Comment - line comment                                                                                 | 
+| `# ...`                  | -          | **[Extended]** Comment - line comment                                                                  | 
+| `(* ... *)`              | -          | Multiline comment                                                                                      | 
 
 [^1]: `=` and `<-` in the rule definition are interchangeable
 

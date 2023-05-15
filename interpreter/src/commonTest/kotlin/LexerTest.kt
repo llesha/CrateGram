@@ -1,9 +1,6 @@
-import token.AndPredicate
-import token.Prefix
-import token.Star
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.assertFails
 
 class LexerTest {
     @Test
@@ -57,12 +54,26 @@ class LexerTest {
 //        )
     }
 
+    @Test fun testUnclosedComment() {
+        val lexer = Lexer("""
+            Power   = Value ("^" Power)?
+            Sum     = Product (("+" | "-") Product)*
+            (*
+            Product = Power (("*" | "/") Power)*
+            Value   = [0-9]+ | "(" Expr ")"
+            Test    = "A" / &Value{3}
+        """)
+        val exception = assertFails { lexer.tokenize() }
+        assertEquals(exception.message, "Unclosed multiline comment at 107..108")
+    }
+
 
     @Test
     fun testCalculator() {
         val lexer = Lexer(
             """
-            Power   = Value ("^" Power)?
+            Power   = Value ("^" Power)? (* comment here
+            *)
             Sum     = Product (("+" | "-") Product)*
             Expr    = Sum
             Product = Power (("*" | "/") Power)*

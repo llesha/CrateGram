@@ -113,6 +113,17 @@ class Lexer(private val text: String) {
     private fun skipWhitespace() {
         while (index < text.length && text[index].isWhitespace())
             index++
+        // skip comment
+        if (index < text.length - 1 && text[index] == '(' && text[index + 1] == '*') {
+            val startIndex = index
+            index += 2
+            while (index < text.length - 1 && (text[index] != '*' || text[index + 1] != ')'))
+                index++
+            if (index == text.lastIndex || (text[index] != '*' && text[index + 1] != ')'))
+                throw LexerError("Unclosed multiline comment", startIndex..startIndex + 1)
+            index += 2
+            skipWhitespace()
+        }
     }
 
     private fun getByIndex(): Char {

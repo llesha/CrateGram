@@ -20,7 +20,7 @@ class Parser(private val rules: List<List<Token>>) {
         val ident = rule.first() as IdentToken
 
         while (true) {
-            currentRule.add(parseNext(rule, "#") ?: break)
+            currentRule.add(parseNext(rule, "~") ?: break)
         }
         val ruleToken = if (stack.isNotEmpty()) {
             val res = addOr()
