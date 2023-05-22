@@ -28,7 +28,7 @@ class Parser(private val rules: List<List<Token>>) {
                 throw ParserError("Parenthesis does not have a closing pair")
             res
         } else if (currentRule.size == 1) currentRule.first()
-        else Group(currentRule.toMutableList(), currentRule[0].range.first..currentRule.last().range.last)
+        else Group.fromList(currentRule.toList())
         return ident to Rule(ruleToken)
     }
 
@@ -72,7 +72,7 @@ class Parser(private val rules: List<List<Token>>) {
                         }
                         stack.removeLast()
                         index++
-                        Group(children.toMutableList(), children.listRange())
+                        Group.fromList(children.toList())
                     }
 
                     "|", "/" -> {
@@ -83,8 +83,8 @@ class Parser(private val rules: List<List<Token>>) {
                         TempToken("$")
                     }
 
-                    "&" -> AndPredicate(index..index, sureParseNext(tokens, condition))
-                    "!" -> NotPredicate(index..index, sureParseNext(tokens, condition))
+                    "&" -> NotPredicate(NotPredicate(sureParseNext(tokens, condition), index..index), index..index)
+                    "!" -> NotPredicate(sureParseNext(tokens, condition), index..index)
 
                     "*" -> checkForRuleAndPrefix(Star(index..index++, surePopPrevious(tokens[index - 1])))
                     "+" -> checkForRuleAndPrefix(Plus(index..index++, surePopPrevious(tokens[index - 1])))
@@ -112,21 +112,21 @@ class Parser(private val rules: List<List<Token>>) {
             stack.removeLast()
         }
         if (stack.lastOrNull() == null) {
-            children.add(Group(currentRule.toMutableList(), currentRule.listRange()))
+            children.add(Group.fromList(currentRule.toList()))
             currentRule.clear()
         } else {
             children.add(makeGroupFromStack())
         }
         children = children.reversed().toMutableList()
-        return Or(children, children.listRange())
+        return Or.fromList(children.toList())
     }
 
-    private fun makeGroupFromStack(): Group {
+    private fun makeGroupFromStack(): Token {
         val groupChildren = currentRule.subList(stack.last().second).toMutableList()
         while (currentRule.size > stack.last().second) {
             currentRule.removeLast()
         }
-        return Group(groupChildren.toMutableList(), groupChildren.listRange())
+        return Group.fromList(groupChildren.toList())
     }
 
     private fun checkForRuleAndPrefix(suffix: Suffix): Token {

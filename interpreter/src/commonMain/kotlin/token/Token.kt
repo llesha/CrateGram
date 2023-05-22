@@ -15,12 +15,15 @@ abstract class Token(val symbol: String, var range: IntRange) {
         return symbol == (other as Token).symbol
     }
 
+    fun toRule(): Rule = Rule(this)
+
     companion object {
         fun empty() = Literal("")
+
     }
 }
 
-abstract class OneChildToken(symbol: String, range: IntRange, var child: Token): Token(symbol, range)
+abstract class OneChildToken(symbol: String, range: IntRange, var child: Token) : Token(symbol, range)
 
 class Literal(symbol: String, range: IntRange = -1..-1) : Token(symbol, range), Terminal {
     override fun toString(): String = """"$symbol""""
@@ -31,6 +34,7 @@ class Literal(symbol: String, range: IntRange = -1..-1) : Token(symbol, range), 
  */
 class IdentToken(symbol: String, range: IntRange = -1..-1) : Token(symbol, range), Terminal
 
-class AnyToken(range: IntRange) : Token(".", range), Terminal
+class AnyToken(range: IntRange = -1..-1) : Token(".", range), Terminal
 
 class TempToken(symbol: String, range: IntRange = -1..-1) : Token(symbol, range)
+

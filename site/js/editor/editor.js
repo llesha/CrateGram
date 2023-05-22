@@ -1,5 +1,6 @@
 import * as themes from "./themes.js";
 import { config, hoverHints, tokenizer } from "./editorConstants.js";
+import { getTheme, updateFontSize } from "../loader.js"
 
 function init() {
     require(['vs/editor/editor.main'], function () {
@@ -40,9 +41,9 @@ Expr    = "a" Product / Sum / Value`,
             glyphMargin: true,
             fontFamily: "Fira Code",
             fontLigatures: true,
-            theme: `PEG-${localStorage.getItem("theme") == null ? "light" : localStorage.getItem("theme")}`,
+            theme: `PEG-${getTheme()}`,
             fontSize: 16,
-            // automaticLayout: true,
+            automaticLayout: true,
             minimap: {
                 enabled: false,
             },
@@ -52,6 +53,97 @@ Expr    = "a" Product / Sum / Value`,
             lineNumbersMinChars: 0,
             bracketColorizationOptions: { enabled: false }
         });
+
+        window.playground = monaco.editor.create(document.getElementById("playground"), {
+            value: ``,
+            language: "PEG",
+            glyphMargin: true,
+            fontFamily: "Fira Code",
+            fontLigatures: true,
+            theme: `PEG-${getTheme()}`,
+            fontSize: 16,
+            automaticLayout: true,
+            minimap: {
+                enabled: false,
+            },
+            folding: false,
+            lineNumbers: "off",
+            lineDecorationsWidth: 0,
+            lineNumbersMinChars: 0,
+            bracketColorizationOptions: { enabled: false }
+        });
+
+        /**
+         * Represents an placeholder renderer for monaco editor
+         * https://github.com/microsoft/monaco-editor/issues/568#issuecomment-1511031193
+         */
+        class PlaceholderContentWidget {
+            static ID = 'editor.widget.placeholderHint';
+
+
+            constructor(placeholder, editor) {
+                this.placeholder = placeholder;
+                this.editor = editor;
+                // register a listener for editor code changes
+                editor.onDidChangeModelContent(() => this.onDidChangeModelContent());
+                // ensure that on initial load the placeholder is shown
+                this.onDidChangeModelContent();
+            }
+
+            onDidChangeModelContent() {
+                if (this.editor.getValue() === '') {
+                    this.editor.addContentWidget(this);
+                } else {
+                    this.editor.removeContentWidget(this);
+                }
+            }
+
+            getId() {
+                return PlaceholderContentWidget.ID;
+            }
+
+            getDomNode() {
+                if (!this.domNode) {
+                    this.domNode = document.createElement('div');
+                    this.domNode.style.width = 'max-content';
+                    this.domNode.style.color = "#929292";
+                    this.domNode.textContent = this.placeholder;
+                    this.domNode.style.fontStyle = 'italic';
+                    this.domNode.style.pointerEvents = "none"
+                    this.editor.applyFontInfo(this.domNode);
+                }
+
+                return this.domNode;
+            }
+
+            getPosition() {
+                return {
+                    position: { lineNumber: 1, column: 1 },
+                    preference: [monaco.editor.ContentWidgetPositionPreference.EXACT],
+                };
+            }
+
+            dispose() {
+                this.editor.removeContentWidget(this);
+            }
+        }
+
+        new PlaceholderContentWidget('input to check', window.playground);
+        new PlaceholderContentWidget('grammar', window.editor);
+
+        updateFontSize()
+
+        // var bp = window.playground.deltaDecorations([bp], [])
+        // window.playground.deltaDecorations([],
+        //     [
+        //         // {
+        //         //     options: { isWholeLine: true, glyphMarginClassName: 'fa-solid fa-check' },
+        //         //     range: { startLineNumber: 1, startColumn: 1, endLineNumber: 1, endColumn: 1 }
+        //         // },
+        //         {
+        //             options: { isWholeLine: false, glyphMarginClassName: 'fa-solid fa-check' },
+        //             range: { startLineNumber: 1, startColumn: 1, endLineNumber: 1, endColumn: 1 }
+        //         }])
 
         window.editor.addCommand(monaco.KeyMod.Alt | monaco.KeyMod.Shift | monaco.KeyCode.KeyF, function () {
             let tokens = monaco.editor.tokenize(window.editor.getValue(), "PEG")

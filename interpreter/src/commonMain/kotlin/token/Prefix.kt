@@ -6,6 +6,6 @@ class AndPredicate(position: IntRange, child: Token) : Prefix("&", position, chi
     override fun toString(): String = "&$child"
 }
 
-class NotPredicate(position: IntRange, child: Token) : Prefix("!", position, child) {
+class NotPredicate(child: Token, position: IntRange = -1..-1) : Prefix("!", position, child) {
     override fun toString(): String = "!$child"
 }

@@ -13,11 +13,13 @@ var index = 0
  * For reducing grammars we need to create new rules.
  * This function creates names for the rules
  */
-fun generateNonTerminalName(names: Set<IdentToken>): IdentToken {
+fun generateNonTerminalName(names: MutableSet<IdentToken>): IdentToken {
     var res: String
     val nameStrings = names.map { it.symbol }
     while ("$${index}".also { res = it } in nameStrings) {
         index++
     }
-    return IdentToken(res)
+    val result = IdentToken(res)
+    names.add(result)
+    return result
 }
