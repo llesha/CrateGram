@@ -1,7 +1,11 @@
+package result
+
+import LexerError
+import ifNotNull
 import token.*
 
 /**
- * Lexer and parser of PEG grammar
+ * result.Lexer and parser of PEG grammar
  *
  *
  * ## Operator Type Precedence Description

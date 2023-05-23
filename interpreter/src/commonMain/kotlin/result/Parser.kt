@@ -1,3 +1,8 @@
+package result
+
+import ParserError
+import listRange
+import subList
 import token.*
 
 class Parser(private val rules: List<List<Token>>) {
@@ -50,7 +55,7 @@ class Parser(private val rules: List<List<Token>>) {
     }
 
     private fun parseNext(tokens: List<Token>, condition: String): Token? {
-        if (index >= tokens.size || tokens[index].symbol in condition)
+        if (index >= tokens.size || (tokens[index].symbol in condition && tokens[index] is TempToken))
             return null
         return when (tokens[index]) {
             is TempToken -> {

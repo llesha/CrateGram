@@ -41,13 +41,7 @@ import token.*
  *
  */
 class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
-    private val initialToken: Token
     val steps = mutableListOf<Step>()
-
-    init {
-        initialToken = rules[IdentToken("root")] ?: throw InterpreterError("`root` rule is required")
-        steps.add(Step(initialToken, 0))
-    }
 
     fun parseInput(text: String): Pair<Boolean, Int> {
         return followedBy(IdentToken("root"), text, 0)

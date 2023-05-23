@@ -1,3 +1,8 @@
+package result
+
+import InterpreterError
+import ParserError
+import generateNonTerminalName
 import token.*
 
 class ASTTransformer(val rules: MutableMap<IdentToken, Rule>) {
@@ -22,15 +27,16 @@ class ASTTransformer(val rules: MutableMap<IdentToken, Rule>) {
             val newChildren = token.children.filter { it !is TempToken }
             token.children.clear()
             token.children.addAll(newChildren.map { transformToken(it) })
+            if(token.children.size != 2 && token is Or) {
+                throw ParserError("Expected two children in Or expression", token.range)
+            }
+            if (token.children.size == 1) {
+                return token.children.first()
+            }
         } else if (token is OneChildToken) {
             token.child = transformToken(token.child)
             if (token is Suffix)
                 return transformQuantifier(token)
-        }
-        if (token is Group) {
-            if (token.children.size == 1) {
-                return token.children.first()
-            }
         }
         return token
     }
@@ -75,8 +81,6 @@ class ASTTransformer(val rules: MutableMap<IdentToken, Rule>) {
 //            Or(Group(IdentToken("\$T"), IdentToken("\$Z")), Token.empty()).toRule()
 //        rules[IdentToken("\$F")] = Group(IdentToken("\$Z"), IdentToken("\$T")).toRule()
 
-        println(rules.toList().joinToString(separator = "\n"))
-        println()
 //        val keysFixed = rules.keys.toSet()
 //        for (key in keysFixed)
 //            rules[key] = introduceNewRulesInStage1(rules[key]!!.child).toRule()

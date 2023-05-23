@@ -6,22 +6,118 @@
     <title>CrateGram</title>
     <script src="https://kit.fontawesome.com/fcd79d1b18.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/interactive.css">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+    <script type="module" src="js/interpreter/Interpreter.js"></script>
     <script type="text/javascript" src="node_modules/monaco-editor/min/vs/loader.js"></script>
-    <link rel="icon" type="image/svg+xml" href="crategram.svg">
+    <link rel="icon" type="image/svg+xml" href="resources/crategram-ico.svg">
 </head>
 
 <body data-theme="light" style="background-color: var(--bg-color);">
-    <svg width="150" height="100" viewBox="0 0 15 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <div id="main">
+        <div class="left panel">
+            <div><i class="hoverable clickable big-text fa-solid fa-bars" id="menu-button"></i></div>
+            <div id="menu" class="unselectable hidden">
+
+                <div class="menu-element outline-top"><span class="clickable hoverable">Playground (you are here)</span>
+                </div>
+                <!-- <div class="menu-element">
+                    <i class="fa-solid fa-angle-right"></i>
+                    <span class="clickable hoverable expandable" id="tasks-button">Grammar tasks</span>
+                    <div id="grammar-tasks">
+                        <div class="indent"><span class="clickable hoverable">Random</span></div>
+                        <i class="fa-solid fa-angle-right indent"></i>
+                        <span class="clickable hoverable expandable" id="cp-tasks">CP logic</span>
+                        <div style="display:none">
+                            <div class="indent2"><span class="clickable hoverable">CP-1</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-2</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-3</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-4</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-5</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-6</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-7</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-8</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-9</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-10</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-11</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-12</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-13</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-14</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-15</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-16</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-17</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-18</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-19</span></div>
+                            <div class="indent2"><span class="clickable hoverable">CP-20</span></div>
+                        </div>
+                    </div>
+                </div> -->
+                <div class="settings-input menu-element unselectable outline-top">
+                    <p class="search-name">Font size</p>
+                    <input id="font-input" class="unselectable" type="number">
+                </div>
+                <div class="settings-input menu-element unselectable outline-top">
+                    <p class="search-name" title="How much time after last typed before updating input or grammar">
+                        Debounce (ms)</p>
+                    <input id="debounce-input" class="unselectable" type="number">
+                </div>
+                <div class="settings-input menu-element">
+                    <p class="search-name">Theme</p>
+                    <span id="theme-button" class="clickable hoverable">light</span>
+                </div> 
+                <h2 style="border-top: var(--gray) solid 1px; padding-top: 0.5em" id="help">Help</h2>
+                <p>This is currently a <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG</a> parser
+                    playground (but soon it&#39;ll be more than that).</p>
+                <h2 id="how-to-use">How to use</h2>
+                <p>First editor is to define a grammar, second is to check validity of an input. You can hover
+                    on operators in the grammar editor to see their meaning.</p>
+            </div>
+        </div>
+        <div class="right panel">
+            <div id="editor"></div>
+            <div class="status-line">
+                <span id="grammar-error" style="float:left" class="error"></span>
+            </div>
+            <div id="playground"></div>
+            <!-- <div class="status-line">
+                <span></span>
+                <span style="float:right" class="unselectable hoverable clickable">Check
+                    <i class="fa-solid fa-arrow-right-long"></i></span>
+            </div> -->
+            <!-- <div id="input-status"><i class="fa-solid fa-check"></i></div> -->
+            <div style="width: 100%;">
+                <div class="inline-row">
+                    <div class="status-grid">
+                        <div class="unselectable grid-cell grid-left">
+                            <i class="hidden fa-solid fa-xmark to-left" style="position:absolute;"></i>
+                            <div style="text-align: center;">Valid</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="inline-row" style="float:right">
+                    <div class="status-grid">
+                        <div class="unselectable grid-cell grid-right">
+                            <i class="hidden fa-solid fa-xmark to-left" style="position:absolute;"></i>
+                            <div style="text-align: center;">Invalid</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="width:5%"></div>
+    </div>
+    <svg id="svg-icon" width="150" height="100" viewBox="0 0 15 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
         <rect x="0" y="0" width="15" height="10" stroke-width="1" stroke="#929292" fill-opacity="0" />
-        <text fill="#929292" x="50%" y="36%" dominant-baseline="middle" text-anchor="middle" font-size="3" font-family="Fira Code">Crate</text>
-        <text fill="#929292" x="50%" y="66%" dominant-baseline="middle" text-anchor="middle" font-size="3" font-family="Fira Code">Gram</text>
+        <text x="50%" y="36%" dominant-baseline="middle" text-anchor="middle" font-size="3" font-family="Fira Code"
+            fill="#929292">Crate</text>
+        <text x="50%" y="66%" dominant-baseline="middle" text-anchor="middle" font-size="3" font-family="Fira Code"
+            fill="#929292">Gram</text>
         <rect x="0" y="0" fill="#929292" width="1.5" height="1.5"></rect>
         <rect x="13.5" y="0" fill="#929292" width="1.5" height="1.5"></rect>
         <rect x="13.5" y="8.5" fill="#929292" width="1.5" height="1.5"></rect>
         <rect x="0" y="8.5" fill="#929292" width="1.5" height="1.5"></rect>
     </svg>
-    <div id="editor"></div>
+    <script type="module" src="js/loader.js"></script>
     <script type="module" src="js/index.js"></script>
     <script type="module" src="js/editor/editor.js"></script>
 </body>

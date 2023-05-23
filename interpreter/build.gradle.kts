@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+
 plugins {
     kotlin("multiplatform") version "1.8.10"
 }
@@ -19,10 +22,18 @@ kotlin {
         browser {
             commonWebpackConfig {
                 cssSupport {
-                    enabled.set(true)
+                    enabled.set(false)
                 }
             }
+            webpackTask {
+                output.libraryTarget = "commonjs2"
+                destinationDirectory = file("../site/js/interpreter")
+            }
+//            distribution {
+//                directory = file("../site")
+//            }
         }
+        binaries.executable()
     }
     sourceSets {
         val commonMain by getting

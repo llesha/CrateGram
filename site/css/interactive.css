@@ -1,0 +1,15 @@
+.clickable {
+    border-radius: 0.5em;
+    padding: 0.2em;
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
+    cursor: pointer;
+}
+
+.hoverable:hover {
+    background-color: var(--light-gray);
+}
+
+.big-text {
+    font-size: xx-large;
+}

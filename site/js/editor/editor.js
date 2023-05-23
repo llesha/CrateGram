@@ -1,6 +1,8 @@
 import * as themes from "./themes.js";
 import { config, hoverHints, tokenizer } from "./editorConstants.js";
-import { getTheme, updateFontSize } from "../loader.js"
+import { getTheme, updateFontSize, getDebounce } from "../loader.js"
+import { addValueToTable } from "../utils.js";
+
 
 function init() {
     require(['vs/editor/editor.main'], function () {
@@ -33,10 +35,12 @@ function init() {
         monaco.editor.defineTheme("PEG-dark", themes.dracula);
 
         window.editor = monaco.editor.create(document.getElementById("editor"), {
-            value: `Value   = [0-9.]+ / '(' Expr ')'
-Product = Expr (('*' / '/') Expr)*
-Sum     = Expr (('+' / '-') Expr)*
-Expr    = "a" Product / Sum / Value`,
+            value: `root    = Expr
+Expr    = Sum
+Sum     = Product (("+" | "-") Product)*
+Product = Power (("*" | "/") Power)*
+Power   = Value ("^" Power)? 
+Value   = [0-9]+ | "(" Expr ")"`,
             language: "PEG",
             glyphMargin: true,
             fontFamily: "Fira Code",
@@ -56,7 +60,6 @@ Expr    = "a" Product / Sum / Value`,
 
         window.playground = monaco.editor.create(document.getElementById("playground"), {
             value: ``,
-            language: "PEG",
             glyphMargin: true,
             fontFamily: "Fira Code",
             fontLigatures: true,
@@ -81,20 +84,24 @@ Expr    = "a" Product / Sum / Value`,
             static ID = 'editor.widget.placeholderHint';
 
 
-            constructor(placeholder, editor) {
+            constructor(placeholder, editor, contentChangeFunction) {
                 this.placeholder = placeholder;
                 this.editor = editor;
                 // register a listener for editor code changes
-                editor.onDidChangeModelContent(() => this.onDidChangeModelContent());
+                editor.onDidChangeModelContent(() => this.onDidChangeModelContent(contentChangeFunction));
                 // ensure that on initial load the placeholder is shown
-                this.onDidChangeModelContent();
+                this.onDidChangeModelContent(contentChangeFunction);
             }
 
-            onDidChangeModelContent() {
+            onDidChangeModelContent(contentChangeFunction) {
+                if (this.editor.hasMarkers) {
+                    this.editor.removeMarkers()
+                }
                 if (this.editor.getValue() === '') {
                     this.editor.addContentWidget(this);
                 } else {
                     this.editor.removeContentWidget(this);
+                    contentChangeFunction(this.editor)
                 }
             }
 
@@ -128,8 +135,48 @@ Expr    = "a" Product / Sum / Value`,
             }
         }
 
-        new PlaceholderContentWidget('input to check', window.playground);
-        new PlaceholderContentWidget('grammar', window.editor);
+        new PlaceholderContentWidget('input to check', window.playground,
+            (editor) => {
+                if (window.debounceInput != null) {
+                    clearTimeout(window.debounceInput)
+                }
+                window.debounceInput = setTimeout(() => {
+                    window.debounceInput = null;
+                    let value = editor.getValue()
+                    let result = window.Interpreter.parse(value)
+                    if (!result[0])
+                        showMarkers("", result[1], window.playground)
+                    addValueToTable(result[0], result[1], value)
+                }, getDebounce().toString());
+            });
+        new PlaceholderContentWidget('grammar', window.editor,
+            (editor) => {
+                if (window.debounce != null) {
+                    clearTimeout(window.debounce)
+                }
+                window.debounce = setTimeout(() => {
+                    window.debounce = null;
+                    var hadError = false
+                    let errorElement = document.getElementById("grammar-error")
+                    try {
+                        window.Interpreter.setGrammar(editor.getValue())
+                    } catch (error) {
+                        hadError = true
+                        if (error.msg == null)
+                            errorElement.innerText = `Unexpected error: ${error}`
+                        else {
+                            errorElement.innerText = error.msg
+                            showMarkers(error.msg,
+                                //TODO: change range bad names of fields
+                                error.position ?? { first: error.range.v1_1, second: error.range.x1_1 },
+                                window.editor)
+                        }
+                    } finally {
+                        if (!hadError)
+                            errorElement.innerText = ""
+                    }
+                }, getDebounce().toString());
+            });
 
         updateFontSize()
 
@@ -147,7 +194,6 @@ Expr    = "a" Product / Sum / Value`,
 
         window.editor.addCommand(monaco.KeyMod.Alt | monaco.KeyMod.Shift | monaco.KeyCode.KeyF, function () {
             let tokens = monaco.editor.tokenize(window.editor.getValue(), "PEG")
-            //console.log(tokens)
             let lineIndices = []
             for (const line of tokens) {
                 let equal = line.filter(x => x.type == "operator.equal.PEG")
@@ -161,6 +207,7 @@ Expr    = "a" Product / Sum / Value`,
             bracketColorizationOptions: { enabled: false },
             // fontSize: 5
         })
+
 
         monaco.languages.registerHoverProvider("PEG", {
             provideHover: function (model, position) {
@@ -221,6 +268,36 @@ Expr    = "a" Product / Sum / Value`,
         });
         // remove completion showing
         window.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Space, function () { })
+
+        // TODO: remove duplicate code
+        window.editor.removeMarkers = function () {
+            window.editor.hasMarkers = false
+            monaco.editor.setModelMarkers(window.editor.getModel(), "owner", [])
+        }
+
+        window.playground.removeMarkers = function () {
+            window.playground.hasMarkers = false
+            monaco.editor.setModelMarkers(window.playground.getModel(), "owner", [])
+        }
+
+        let showMarkers = function (msg, range, editor) {
+            if (!isNaN(range)) {
+                range = { first: range, second: range }
+            }
+            let start = editor.getModel().getPositionAt(range.first)
+            let end = editor.getModel().getPositionAt(range.second)
+            editor.hasMarkers = true
+            console.log(start, end)
+
+            monaco.editor.setModelMarkers(editor.getModel(), "owner", [{
+                message: msg,
+                severity: monaco.MarkerSeverity.Error,
+                startLineNumber: start.lineNumber,
+                startColumn: start.column,
+                endLineNumber: end.lineNumber,
+                endColumn: end.column,
+            }])
+        }
     })
 }
 

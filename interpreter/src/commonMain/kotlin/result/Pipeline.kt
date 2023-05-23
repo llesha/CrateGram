@@ -1,7 +1,10 @@
-import result.Interpreter
+package result
+
+import InterpreterError
 import token.IdentToken
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
+import kotlin.js.JsName
 
 
 @OptIn(ExperimentalJsExport::class)
@@ -10,6 +13,7 @@ class Pipeline {
     private val interpreter = Interpreter(mutableMapOf())
 
 
+    @JsName("setGrammar")
     fun setGrammar(grammar: String): Pipeline {
         val rules = Parser(Lexer(grammar).tokenize()).parse()
         val astTransformer = ASTTransformer(rules)
@@ -20,7 +24,9 @@ class Pipeline {
         return this
     }
 
-    fun parse(text: String): Pair<Boolean, Int> {
-        return interpreter.parseInput(text)
+    @JsName("parse")
+    fun parse(text: String): Array<Any> {
+        val (isParsed, index) =  interpreter.parseInput(text)
+        return arrayOf(isParsed, index)
     }
 }
