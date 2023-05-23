@@ -74,6 +74,24 @@ class InterpreterTest {
         assertTrue(exception.toString().lowercase().contains("stack"))
     }
 
+    @Test
+    fun testCPLogic4() {
+        val pipeline = Pipeline().setGrammar(
+            """
+             # does not have shady green and red together (4 and 1)
+root = (no1+ | no4+) !.
+
+no1 = "2" | "3" | "4"
+no4 = "1" | "2" | "3"
+
+TERM = "1" | "2" | "3" | "4"
+        """
+        )
+        println(pipeline.parse("12").joinToString())
+        println(pipeline.parse("112312").joinToString())
+        println(pipeline.parse("12313143").joinToString())
+    }
+
     private fun assertParseResult(parseResult: Array<Any>, expected: List<Any>) {
         assertEquals(parseResult[0] as Boolean, expected[0] as Boolean)
         assertEquals(parseResult[1] as Int, expected[1] as Int)

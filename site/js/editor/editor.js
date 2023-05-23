@@ -162,14 +162,13 @@ Value   = [0-9]+ | "(" Expr ")"`,
                     localStorage.setItem("grammar", value)
                     let errorElement = document.getElementById("grammar-error")
                     try {
-                        window.Interpreter.setGrammar(value)
+                        console.log(window.Interpreter.setGrammar(value))
                     } catch (error) {
                         hadError = true
                         if (error.msg == null)
                             errorElement.innerText = `Unexpected error: ${error}`
                         else {
                             errorElement.innerText = error.msg
-                            console.log(error)
                             showMarkers(error.msg,
                                 //TODO: change range bad names of fields
 

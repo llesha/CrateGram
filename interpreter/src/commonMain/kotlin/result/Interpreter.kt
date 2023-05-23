@@ -41,6 +41,10 @@ import token.*
  *
  */
 class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
+    /**
+     * List of characters not recognized by [AnyToken]
+     */
+    private val dotExceptions = "\n\r\u2028\u2029"
     val steps = mutableListOf<Step>()
 
     fun parseInput(text: String): Pair<Boolean, Int> {
@@ -121,6 +125,12 @@ class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
                     text,
                     index
                 )
+            }
+
+            is AnyToken -> {
+                if (index >= text.length || text[index] in dotExceptions)
+                    return false to index
+                return true to index + 1
             }
 
             else -> throw InterpreterError(
