@@ -169,9 +169,11 @@ Value   = [0-9]+ | "(" Expr ")"`,
                             errorElement.innerText = `Unexpected error: ${error}`
                         else {
                             errorElement.innerText = error.msg
+                            console.log(error)
                             showMarkers(error.msg,
                                 //TODO: change range bad names of fields
-                                error.position ?? { first: error.range.v1_1, second: error.range.x1_1 },
+
+                                error.position ?? { first: error.range.v1_1 - 1, second: error.range.w1_1 - 1 },
                                 window.editor)
                         }
                     } finally {
