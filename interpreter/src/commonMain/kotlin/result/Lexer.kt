@@ -142,6 +142,7 @@ class Lexer(private val text: String) {
     companion object {
         val sequenceTokens = listOf<Triple<Char, Char, (String, IntRange) -> Token>>(
             Triple('"', '"') { value: String, position: IntRange -> Literal(value, position) },
+            Triple('\'', '\'') { value: String, position: IntRange -> Literal(value, position) },
             Triple('[', ']') { value: String, position: IntRange ->
                 if (value == "")
                     Literal("", position)
