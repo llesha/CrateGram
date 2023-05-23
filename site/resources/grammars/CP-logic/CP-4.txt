@@ -1,6 +1,6 @@
 # does not have shady green and red together (4 and 1)
 
-root = no1+ | no4+
+root = (no1+ | no4+) !.
 
 no1 = "2" | "3" | "4"
 no4 = "1" | "2" | "3"

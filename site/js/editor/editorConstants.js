@@ -71,6 +71,7 @@ const tokenizer = {
                 cases: {
                     "=": "operator.equal",
                     "<-": "operator.equal",
+                    "!.": "operator",
                     "@operators": "operator",
                     "@default": "invalid",
                 },
