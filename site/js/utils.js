@@ -29,7 +29,6 @@ export function addValueToTable(isSuccess, index, value) {
 }
 
 function removeCell(element) {
-    console.log(element)
     element.parentElement.removeChild(element)
 }
 

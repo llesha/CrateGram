@@ -92,6 +92,15 @@ TERM = "1" | "2" | "3" | "4"
         println(pipeline.parse("12313143").joinToString())
     }
 
+    @Test
+    fun testPossiblyIncorrectGrammar() {
+        val pipeline = Pipeline().setGrammar("""
+            root = (no1+ | no4+) !.
+            no1 = "2" | "3" | !"4"
+            no4 = "1" | "2" | "3"
+        """)
+    }
+
     private fun assertParseResult(parseResult: Array<Any>, expected: List<Any>) {
         assertEquals(parseResult[0] as Boolean, expected[0] as Boolean)
         assertEquals(parseResult[1] as Int, expected[1] as Int)

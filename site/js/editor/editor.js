@@ -162,7 +162,7 @@ Value   = [0-9]+ | "(" Expr ")"`,
                     localStorage.setItem("grammar", value)
                     let errorElement = document.getElementById("grammar-error")
                     try {
-                        console.log(window.Interpreter.setGrammar(value))
+                        window.Interpreter.setGrammar(value)
                     } catch (error) {
                         hadError = true
                         if (error.msg == null)
@@ -291,7 +291,6 @@ Value   = [0-9]+ | "(" Expr ")"`,
             let start = editor.getModel().getPositionAt(range.first)
             let end = editor.getModel().getPositionAt(range.second)
             editor.hasMarkers = true
-            console.log(start, end)
 
             monaco.editor.setModelMarkers(editor.getModel(), "owner", [{
                 message: msg,
