@@ -117,7 +117,7 @@ class Lexer(private val text: String) {
     private fun skipWhitespace() {
         while (index < text.length && text[index].isWhitespace())
             index++
-        // skip comment
+        // skip multiline comment
         if (index < text.length - 1 && text[index] == '(' && text[index + 1] == '*') {
             val startIndex = index
             index += 2
@@ -126,6 +126,12 @@ class Lexer(private val text: String) {
             if (index == text.lastIndex || (text[index] != '*' && text[index + 1] != ')'))
                 throw LexerError("Unclosed multiline comment", startIndex..startIndex + 1)
             index += 2
+            skipWhitespace()
+        }
+        // skip line comment
+        if (index < text.length && text[index] == '#') {
+            while (index < text.length && text[index] != '\n')
+                index++
             skipWhitespace()
         }
     }

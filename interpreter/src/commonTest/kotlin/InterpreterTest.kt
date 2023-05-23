@@ -61,7 +61,9 @@ class InterpreterTest {
     fun testLoop() {
         val pipeline = Pipeline().setGrammar(
             """
+                # line comment
             Value   = [0-9.]+ / "(" Expr ")"
+            # another line comment
             Product = Expr (("*" / "/") Expr)*
             Sum     = Expr (("+" / "-") Expr)*
             Expr    = "a" Product / Sum / Value
