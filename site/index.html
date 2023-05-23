@@ -17,9 +17,9 @@
     <div id="main">
         <div class="left panel">
             <div><i class="hoverable clickable big-text fa-solid fa-bars" id="menu-button"></i></div>
-            <div id="menu" class="unselectable hidden">
-
-                <div class="menu-element outline-top"><span class="clickable hoverable">Playground (you are here)</span>
+            <div id="menu" class="hidden">
+                <div class="unselectable menu-element outline-top">
+                    <span class="clickable hoverable">Playground (you are here)</span>
                 </div>
                 <!-- <div class="menu-element">
                     <i class="fa-solid fa-angle-right"></i>
@@ -52,19 +52,19 @@
                         </div>
                     </div>
                 </div> -->
-                <div class="settings-input menu-element unselectable outline-top">
+                <div class="unselectable settings-input menu-element unselectable outline-top">
                     <p class="search-name">Font size</p>
                     <input id="font-input" class="unselectable" type="number">
                 </div>
-                <div class="settings-input menu-element unselectable outline-top">
+                <div class="unselectable settings-input menu-element unselectable outline-top">
                     <p class="search-name" title="How much time after last typed before updating input or grammar">
                         Debounce (ms)</p>
                     <input id="debounce-input" class="unselectable" type="number">
                 </div>
-                <div class="settings-input menu-element">
+                <div class="unselectable settings-input menu-element">
                     <p class="search-name">Theme</p>
                     <span id="theme-button" class="clickable hoverable">light</span>
-                </div> 
+                </div>
                 <h2 style="border-top: var(--gray) solid 1px; padding-top: 0.5em" id="help">Help</h2>
                 <p>This is currently a <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG</a> parser
                     playground (but soon it&#39;ll be more than that).</p>

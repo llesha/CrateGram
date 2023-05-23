@@ -34,8 +34,9 @@ function init() {
         monaco.editor.defineTheme("PEG-light", themes.light);
         monaco.editor.defineTheme("PEG-dark", themes.dracula);
 
+        let storedGrammar = localStorage.getItem("grammar")
         window.editor = monaco.editor.create(document.getElementById("editor"), {
-            value: `root    = Expr
+            value: storedGrammar != null ? storedGrammar : `root    = Expr
 Expr    = Sum
 Sum     = Product (("+" | "-") Product)*
 Product = Power (("*" | "/") Power)*
@@ -157,9 +158,11 @@ Value   = [0-9]+ | "(" Expr ")"`,
                 window.debounce = setTimeout(() => {
                     window.debounce = null;
                     var hadError = false
+                    let value = editor.getValue()
+                    localStorage.setItem("grammar", value)
                     let errorElement = document.getElementById("grammar-error")
                     try {
-                        window.Interpreter.setGrammar(editor.getValue())
+                        window.Interpreter.setGrammar(value)
                     } catch (error) {
                         hadError = true
                         if (error.msg == null)
