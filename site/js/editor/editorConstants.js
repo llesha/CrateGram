@@ -62,7 +62,6 @@ const tokenizer = {
             include: "@whitespace",
         },
         [/#.*/, "comment"],
-        [/\(\*.*\*\)/, "comment"],
 
         // delimiters and operators
         [/[{}()]/, "@brackets"],
@@ -114,6 +113,10 @@ const tokenizer = {
     ],
 
     comment: [
+        [/[^\/*]+/, "comment"],
+        [/\(\*/, "comment", "@push"], // nested comment
+        [/\*\)/, "comment", "@pop"],
+        [/[\/*]/, "comment"],
     ],
 
     string: [
@@ -159,7 +162,8 @@ const tokenizer = {
     ],
 
     whitespace: [
-        [/[ \t\r\n]+/, "white"]
+        [/[ \t\r\n]+/, "white"],
+        [/\(\*/, "comment", "@comment"]
     ]
 }
 
