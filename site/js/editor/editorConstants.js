@@ -46,6 +46,7 @@ const config = {
 const tokenizer = {
     root: [
         // identifiers and keywords
+        [/\./, "identifier"],
         [
             /[a-z_][\w]*/,
             {
@@ -71,7 +72,6 @@ const tokenizer = {
                 cases: {
                     "=": "operator.equal",
                     "<-": "operator.equal",
-                    "!.": "operator",
                     "@operators": "operator",
                     "@default": "invalid",
                 },

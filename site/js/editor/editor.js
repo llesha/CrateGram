@@ -24,7 +24,7 @@ function init() {
                 "|", "/",
             ],
             // we include these common regular expressions
-            symbols: /[=>\.<!?:&|+\-*\/%]+/,
+            symbols: /[=><!?:&|+\-*\/%]+/,
             // C# style strings
             escapes:
                 /\\(?:[abfnrtv\\"']|x[\dA-Fa-f]{1,4}|u[\dA-Fa-f]{4}|U[\dA-Fa-f]{8})/,
