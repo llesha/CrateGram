@@ -1,4 +1,4 @@
-import result.ASTTransformer
+import result.RuleTransformer
 import result.Interpreter
 import result.Lexer
 import result.Parser
@@ -11,7 +11,7 @@ class LexerTest {
     fun testLexer() {
         val text = """a = ("A") "B" "C" "D" | [AB]"""
         val rules = Parser(Lexer(text).tokenize()).parse()
-        ASTTransformer(rules).transformRules()
+        RuleTransformer(rules).transformRules()
         println(rules.toList().joinToString(separator = "\n"))
     }
 
@@ -93,7 +93,7 @@ class LexerTest {
         )
         val parser = Parser(tokens)
         val rules = parser.parse()
-        val transformer = ASTTransformer(rules)
+        val transformer = RuleTransformer(rules)
         transformer.transformRules()
         println(rules.toList().joinToString(separator = "\n"))
         val interpreter = Interpreter(rules)

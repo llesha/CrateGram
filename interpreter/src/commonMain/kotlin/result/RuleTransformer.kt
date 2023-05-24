@@ -5,7 +5,7 @@ import ParserError
 import generateNonTerminalName
 import token.*
 
-class ASTTransformer(val rules: MutableMap<IdentToken, Rule>) {
+class RuleTransformer(val rules: MutableMap<IdentToken, Rule>) {
     private val ruleNames = mutableSetOf<IdentToken>()
     fun transformRules(): MutableMap<IdentToken, Rule> {
         val initialKeys = rules.keys.toSet()
@@ -27,7 +27,7 @@ class ASTTransformer(val rules: MutableMap<IdentToken, Rule>) {
             val newChildren = token.children.filter { it !is TempToken }
             token.children.clear()
             token.children.addAll(newChildren.map { transformToken(it) })
-            if(token.children.size != 2 && token is Or) {
+            if (token.children.size != 2 && token is Or) {
                 throw ParserError("Expected two children in Or expression", token.range)
             }
             if (token.children.size == 1) {
@@ -37,6 +37,8 @@ class ASTTransformer(val rules: MutableMap<IdentToken, Rule>) {
             token.child = transformToken(token.child)
             if (token is Suffix)
                 return transformQuantifier(token)
+        } else if (token is IdentToken && !rules.keys.contains(token)) {
+            throw ParserError("No rule named $token", token.range)
         }
         return token
     }
@@ -49,17 +51,25 @@ class ASTTransformer(val rules: MutableMap<IdentToken, Rule>) {
     private fun transformQuantifier(quantifier: Suffix): Token {
         return when (quantifier) {
             is QuestionMark -> Or(quantifier.child, Token.empty())
-            is Plus -> Group(
-                quantifier.child, transformQuantifier(Star(quantifier.range, quantifier.child)),
-                // warning: duplicating a token
-                quantifier.range
-            )
+            // this code differs from original paper to make ast
+            is Plus -> {
+                val ruleFirst = generateNonTerminalName(ruleNames)
+                val ruleSecond = generateNonTerminalName(ruleNames)
+                rules[ruleFirst] = Rule(Group(quantifier.child, ruleSecond))
+                rules[ruleSecond] = Rule(Or(Group(quantifier.child, ruleSecond), Token.empty()))
+//                Group(
+//                    quantifier.child, transformQuantifier(Star(quantifier.range, quantifier.child)),
+//                    // warning: duplicating a token
+//                    quantifier.range
+//                )
+                GeneratedToken(ruleFirst.symbol, "+")
+            }
 
             is Star -> {
                 val ruleName = generateNonTerminalName(ruleNames)
                 rules[ruleName] = /* warning: duplicating [ruleName] */
                     Rule(Or(Group(quantifier.child, ruleName), Token.empty()))
-                ruleName
+                GeneratedToken(ruleName.symbol, "*")
             }
 
             is Repeated -> {

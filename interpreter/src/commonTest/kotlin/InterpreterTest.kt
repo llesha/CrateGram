@@ -75,24 +75,6 @@ class InterpreterTest {
     }
 
     @Test
-    fun testCPLogic4() {
-        val pipeline = Pipeline().setGrammar(
-            """
-             # does not have shady green and red together (4 and 1)
-root = (no1+ | no4+) !.
-
-no1 = "2" | "3" | "4"
-no4 = "1" | "2" | "3"
-
-TERM = "1" | "2" | "3" | "4"
-        """
-        )
-        println(pipeline.parse("12").joinToString())
-        println(pipeline.parse("112312").joinToString())
-        println(pipeline.parse("12313143").joinToString())
-    }
-
-    @Test
     fun testPossiblyIncorrectGrammar() {
         val pipeline = Pipeline().setGrammar("""
             root = (no1+ | no4+) !.
@@ -100,6 +82,25 @@ TERM = "1" | "2" | "3" | "4"
             no4 = "1" | "2" | "3"
         """)
     }
+
+    @Test
+    fun testStringRepresentation() {
+        val pipeline  = Pipeline().setGrammar("""
+            root = choice !.
+
+            choice = in4 | in3 | in2 | in1
+            in4 = "4" (choice | TERM) "4"
+            in3 = "3" (choice | TERM) "3"
+            in2 = "2" (choice | TERM) "2"
+            in1 = "1" (choice | TERM) "1"
+
+            TERM = "1" | "2" | "3" | "4" | ""
+        """.trimIndent())
+        pipeline.parse("11")
+
+    }
+
+
 
     private fun assertParseResult(parseResult: Array<Any>, expected: List<Any>) {
         assertEquals(parseResult[0] as Boolean, expected[0] as Boolean)

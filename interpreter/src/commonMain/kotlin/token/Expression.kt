@@ -9,7 +9,18 @@ abstract class Expression(symbol: String, position: IntRange, val children: Muta
 
 class Group(first: Token, second: Token, position: IntRange = -1..-1) :
     Expression("(...)", position, mutableListOf(first, second)) {
-    override fun toString(): String = "(${children.joinToString(separator = " ")})"
+    override fun toString(): String = toStringMindingParentheses()
+
+    fun toStringMindingParentheses(isInsideGroup: Boolean = false): String {
+        val childrenRepresentation = children.joinToString(separator = " ") {
+            when (it) {
+                is Or -> "($it)"
+                is Group -> it.toStringMindingParentheses(true)
+                else -> it.toString()
+            }
+        }
+        return if (isInsideGroup) childrenRepresentation else "($childrenRepresentation)"
+    }
 
     companion object {
         fun fromList(list: List<Token>): Token {
@@ -19,6 +30,7 @@ class Group(first: Token, second: Token, position: IntRange = -1..-1) :
                 return list.first()
             if (list.size == 2)
                 return Group(list[0], list[1], list.listRange())
+
             val range = list.listRange()
             return Group(list[0], fromList(list.subList(1).toList()), range)
         }

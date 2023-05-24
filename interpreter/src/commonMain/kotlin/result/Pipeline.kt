@@ -16,10 +16,10 @@ class Pipeline {
     @JsName("setGrammar")
     fun setGrammar(grammar: String): Pipeline {
         val rules = Parser(Lexer(grammar).tokenize()).parse()
-        val astTransformer = ASTTransformer(rules)
-        astTransformer.transformRules()
-        astTransformer.rules[IdentToken("root")] ?: throw InterpreterError("`root` rule is required")
-        interpreter.rules.putAll(astTransformer.rules)
+        val ruleTransformer = RuleTransformer(rules)
+        ruleTransformer.transformRules()
+        ruleTransformer.rules[IdentToken("root")] ?: throw InterpreterError("`root` rule is required")
+        interpreter.rules.putAll(ruleTransformer.rules)
 
         return this
     }

@@ -32,9 +32,10 @@ class Literal(symbol: String, range: IntRange = -1..-1) : Token(symbol, range), 
 /**
  * root - is a starting rule
  */
-class IdentToken(symbol: String, range: IntRange = -1..-1) : Token(symbol, range), Terminal
+open class IdentToken(symbol: String, range: IntRange = -1..-1) : Token(symbol, range), Terminal
 
 class AnyToken(range: IntRange = -1..-1) : Token(".", range), Terminal
 
 class TempToken(symbol: String, range: IntRange = -1..-1) : Token(symbol, range)
 
+class GeneratedToken(symbol: String, val inPlaceOfPrevious: String?): IdentToken(symbol)

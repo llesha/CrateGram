@@ -28,6 +28,9 @@ import token.*
  *
  * ## Reduction:
  * * e* replaced with: a <- e a / ε
+ * * e+ replaced with: a1 (not from original article to make ast work)
+ * 1. a1 <- e a2
+ * 2. a2 <- e a2 / ε
  *
  * ### Reducing predicates
  * Add non-terminals:
@@ -45,9 +48,12 @@ class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
      * List of characters not recognized by [AnyToken]
      */
     private val dotExceptions = "\n\r\u2028\u2029"
-    val steps = mutableListOf<Step>()
+    val ast = Node("")
+    private var currentParent = ast
 
     fun parseInput(text: String): Pair<Boolean, Int> {
+        ast.children.clear()
+        currentParent = ast
         return followedBy(IdentToken("root"), text, 0)
     }
 
@@ -57,80 +63,93 @@ class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
      */
     private fun followedBy(token: Token, text: String, index: Int): Pair<Boolean, Int> {
         when (token) {
-            is NotPredicate -> {
+            is NotPredicate -> return withAst {
                 val result = followedBy(token.child, text, index)
-                return !result.first to index
+                return@withAst !result.first to index
             }
 
-            is Group -> {
+            is Group -> return withAst {
                 var changedIndex = index
                 for (child in token.children) {
                     val next = followedBy(child, text, changedIndex)
                     if (!next.first)
-                        return false to index
+                        return@withAst false to index
                     changedIndex = next.second
                 }
-                return true to changedIndex
+                return@withAst true to changedIndex
             }
 
-            is Or -> {
+            is Or -> return withAst {
                 for (child in token.children) {
                     val result = followedBy(child, text, index)
                     if (result.first)
-                        return true to result.second
+                        return@withAst true to result.second
                 }
-                return false to index
+                return@withAst false to index
             }
 
-            is Literal -> {
+            is Literal -> return withAstValue(text, index) {
                 if (token.symbol == "")
-                    return true to index
+                    return@withAstValue true to index
                 if (token.symbol.length + index - 1 >= text.length)
-                    return false to index
+                    return@withAstValue false to index
                 if (text.substring(index, index + token.symbol.length) == token.symbol)
-                    return true to index + token.symbol.length
-                return false to index
+                    return@withAstValue true to index + token.symbol.length
+                return@withAstValue false to index
             }
 
-            is CharacterClass -> {
+            is CharacterClass -> return withAstValue(text, index) {
                 if (index >= text.length)
-                    return false to index
+                    return@withAstValue false to index
                 val variants = token.variants
                 if (text[index] == '\\') {
                     if (index + 1 >= text.length)
-                        return false to index
+                        return@withAstValue false to index
                     variants.ranges.forEach {
                         // TODO: create function that will create real escapes and then make ranges with them
                         if (it.firstEscaped && text[index + 1] in it.range)
-                            return true to index + 2
+                            return@withAstValue true to index + 2
                     }
-                    return if (text[index] in variants.escaped)
+                    return@withAstValue if (text[index] in variants.escaped)
                         true to index + 2
                     else
                         false to index
                 }
                 variants.ranges.forEach {
                     if (!it.firstEscaped && text[index] in it.range)
-                        return true to index + 1
+                        return@withAstValue true to index + 1
                 }
-                return if (text[index] in variants.normal)
+                return@withAstValue if (text[index] in variants.normal)
                     true to index + 1
                 else
                     false to index
             }
 
-            is IdentToken -> {
-                return followedBy(
-                    rules[token]?.child ?: throw InterpreterError("No rule named $token", position = index),
-                    text,
-                    index
-                )
+            is IdentToken, is GeneratedToken -> {
+                val prevParent = currentParent
+                if (token.symbol[0] != '$' || (token is GeneratedToken && token.inPlaceOfPrevious != null)) {
+                    val newNode = if (token is GeneratedToken) Node(token.inPlaceOfPrevious!!) else Node(token.symbol)
+                    currentParent.children.add(newNode)
+                    currentParent = newNode
+                }
+                val result = withAst {
+                    followedBy(
+                        rules[IdentToken(token.symbol)]?.child ?: throw InterpreterError(
+                            "No rule named $token",
+                            position = index
+                        ),
+                        text,
+                        index
+                    )
+                }
+                currentParent = prevParent
+                return result
             }
 
-            is AnyToken -> {
+            is AnyToken -> return withAst {
                 if (index >= text.length || text[index] in dotExceptions)
-                    return false to index
-                return true to index + 1
+                    return@withAst false to index
+                return@withAst true to index + 1
             }
 
             else -> throw InterpreterError(
@@ -138,5 +157,31 @@ class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
                 position = index
             )
         }
+    }
+
+    private fun withAstValue(text: String, beforeIndex: Int, block: () -> Pair<Boolean, Int>): Pair<Boolean, Int> {
+        val prevParent = currentParent
+        val childrenCount = prevParent.children.size
+        val result = block()
+        if (!result.first) {
+            currentParent = prevParent
+            while (currentParent.children.size != childrenCount)
+                currentParent.children.removeLast()
+        } else {
+            currentParent.children.add(ValueNode(text.substring(beforeIndex, result.second)))
+        }
+        return result
+    }
+
+    private fun withAst(block: () -> Pair<Boolean, Int>): Pair<Boolean, Int> {
+        val prevParent = currentParent
+        val childrenCount = prevParent.children.size
+        val result = block()
+        if (!result.first) {
+            currentParent = prevParent
+            while (currentParent.children.size != childrenCount)
+                currentParent.children.removeLast()
+        }
+        return result
     }
 }
