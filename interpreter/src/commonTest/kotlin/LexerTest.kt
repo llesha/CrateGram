@@ -5,6 +5,7 @@ import result.Parser
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertTrue
 
 class LexerTest {
     @Test
@@ -65,8 +66,7 @@ class LexerTest {
             Test    = "A" / &Value{3}
         """)
         val exception = assertFails { lexer.tokenize() }
-        println(exception.message)
-        //assertEquals((exception as PosError).msg, "Unclosed multiline comment")
+        assertTrue(exception.stackTraceToString().contains("LexerError"))
     }
 
 

@@ -31,6 +31,7 @@ import token.*
  * * e+ replaced with: a1 (not from original article to make ast work)
  * 1. a1 <- e a2
  * 2. a2 <- e a2 / ε
+ * * e{n} replaced with:
  *
  * ### Reducing predicates
  * Add non-terminals:
@@ -127,8 +128,8 @@ class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
 
             is IdentToken, is GeneratedToken -> {
                 val prevParent = currentParent
-                if (token.symbol[0] != '$' || (token is GeneratedToken && token.inPlaceOfPrevious != null)) {
-                    val newNode = if (token is GeneratedToken) Node(token.inPlaceOfPrevious!!) else Node(token.symbol)
+                if (token.symbol[0] != '$' || token is GeneratedToken) {
+                    val newNode = if (token is GeneratedToken) Node(token.inPlaceOfPrevious) else Node(token.symbol)
                     currentParent.children.add(newNode)
                     currentParent = newNode
                 }

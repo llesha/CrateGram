@@ -23,3 +23,10 @@ fun generateNonTerminalName(names: MutableSet<IdentToken>): IdentToken {
     names.add(result)
     return result
 }
+
+fun <T> MutableList<T>.inPlaceFilter(condition: (T) -> Boolean): MutableList<T> {
+    val newElements = this.filter(condition)
+    clear()
+    addAll(newElements)
+    return this
+}

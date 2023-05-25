@@ -75,17 +75,25 @@ class InterpreterTest {
     }
 
     @Test
-    fun testPossiblyIncorrectGrammar() {
-        val pipeline = Pipeline().setGrammar("""
+    fun testIncorrectGrammar() {
+        setGrammar(
+            """
             root = (no1+ | no4+) !.
             no1 = "2" | "3" | !"4"
             no4 = "1" | "2" | "3"
-        """)
+        """
+        )
+        val exception = assertFails { parse("231") }
+        assertTrue(
+            exception.toString().contains("java.lang.StackOverflowError")
+                    || exception.toString().contains("RangeError: Maximum call stack size exceeded")
+        )
     }
 
     @Test
     fun testStringRepresentation() {
-        val pipeline  = Pipeline().setGrammar("""
+        val pipeline = Pipeline().setGrammar(
+            """
             root = choice !.
 
             choice = in4 | in3 | in2 | in1
@@ -95,11 +103,11 @@ class InterpreterTest {
             in1 = "1" (choice | TERM) "1"
 
             TERM = "1" | "2" | "3" | "4" | ""
-        """.trimIndent())
+        """.trimIndent()
+        )
         pipeline.parse("11")
 
     }
-
 
 
     private fun assertParseResult(parseResult: Array<Any>, expected: List<Any>) {

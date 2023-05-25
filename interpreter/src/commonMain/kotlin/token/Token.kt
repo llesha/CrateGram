@@ -38,4 +38,4 @@ class AnyToken(range: IntRange = -1..-1) : Token(".", range), Terminal
 
 class TempToken(symbol: String, range: IntRange = -1..-1) : Token(symbol, range)
 
-class GeneratedToken(symbol: String, val inPlaceOfPrevious: String?): IdentToken(symbol)
+class GeneratedToken(symbol: String, val inPlaceOfPrevious: String): IdentToken(symbol)
