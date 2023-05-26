@@ -33,7 +33,7 @@ class Parser(private val rules: List<List<Token>>) {
                 throw ParserError("Parenthesis does not have a closing pair")
             res
         } else if (currentRule.size == 1) currentRule.first()
-        else Group.fromList(currentRule.toList())
+        else Group(currentRule.toMutableList())
         return ident to Rule(ruleToken)
     }
 
@@ -77,7 +77,7 @@ class Parser(private val rules: List<List<Token>>) {
                         }
                         stack.removeLast()
                         index++
-                        Group.fromList(children.toList())
+                        Group(children.toMutableList(), parenIdx - 1..index)
                     }
 
                     "|", "/" -> {
@@ -117,13 +117,13 @@ class Parser(private val rules: List<List<Token>>) {
             stack.removeLast()
         }
         if (stack.lastOrNull() == null) {
-            children.add(Group.fromList(currentRule.toList()))
+            children.add(Group(currentRule.toMutableList()))
             currentRule.clear()
         } else {
             children.add(makeGroupFromStack())
         }
         children = children.reversed().toMutableList()
-        return Or.fromList(children.toList())
+        return Or(children.toMutableList())
     }
 
     private fun makeGroupFromStack(): Token {
@@ -131,7 +131,7 @@ class Parser(private val rules: List<List<Token>>) {
         while (currentRule.size > stack.last().second) {
             currentRule.removeLast()
         }
-        return Group.fromList(groupChildren.toList())
+        return Group(groupChildren)
     }
 
     private fun checkForRuleAndPrefix(suffix: Suffix): Token {

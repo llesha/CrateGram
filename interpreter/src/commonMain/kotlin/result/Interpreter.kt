@@ -49,13 +49,19 @@ class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
      * List of characters not recognized by [AnyToken]
      */
     private val dotExceptions = "\n\r\u2028\u2029"
-    val ast = Node("")
+    val ast = Node("root")
     private var currentParent = ast
 
     fun parseInput(text: String): Pair<Boolean, Int> {
         ast.children.clear()
         currentParent = ast
-        return followedBy(IdentToken("root"), text, 0)
+        val res = followedBy(IdentToken("root"), text, 0)
+        if (res.first) {
+            val root = ast.children.first()
+            ast.children.clear()
+            ast.children.addAll(root.children)
+        }
+        return res
     }
 
     /**

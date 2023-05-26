@@ -166,7 +166,7 @@ class Lexer(private val text: String) {
 
         private val groupTokens = listOf<Triple<Char, Char, (IntRange, MutableList<Token>) -> Token>>(
             Triple('(', ')') { position: IntRange, children: MutableList<Token> ->
-                Group.fromList(children.toList())
+                Group(children, position)
             },
         )
     }

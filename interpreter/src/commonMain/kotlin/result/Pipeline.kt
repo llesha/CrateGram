@@ -24,9 +24,13 @@ class Pipeline {
         return this
     }
 
+    fun getAst(): Node {
+        return interpreter.ast
+    }
+
     @JsName("parse")
     fun parse(text: String): Array<Any> {
-        val (isParsed, index) =  interpreter.parseInput(text)
+        val (isParsed, index) = interpreter.parseInput(text)
         return arrayOf(isParsed, index)
     }
 }

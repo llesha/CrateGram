@@ -27,12 +27,14 @@ class RuleTransformer(val rules: MutableMap<IdentToken, Rule>) {
             val newChildren = token.children.filter { it !is TempToken }
             token.children.clear()
             token.children.addAll(newChildren.map { transformToken(it) })
-            if (token.children.size != 2 && token is Or) {
-                throw ParserError("Expected two children in Or expression", token.range)
+            if (token.children.size < 2 && token is Or) {
+                throw ParserError("Expected two children or more in Or expression", token.range)
             }
             if (token.children.size == 1) {
                 return token.children.first()
             }
+            if(token.children.isEmpty())
+                throw ParserError("Empty expression", token.range)
         } else if (token is OneChildToken) {
             token.child = transformToken(token.child)
             if (token is Suffix)
@@ -78,7 +80,9 @@ class RuleTransformer(val rules: MutableMap<IdentToken, Rule>) {
                     /* warning: duplicating [quantifier.child] */
                     children.add(quantifier.child)
                 }
-                Group.fromList(children.toList())
+                val ruleName=  generateNonTerminalName(ruleNames)
+                rules[ruleName] =   Group(children.toMutableList()).toRule()
+                GeneratedToken(ruleName.symbol, "{...}")
             }
 
             else -> throw InterpreterError("Unexpected token $quantifier")

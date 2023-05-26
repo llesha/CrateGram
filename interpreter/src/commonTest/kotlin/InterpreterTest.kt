@@ -1,3 +1,4 @@
+import TestFactory.assertParse
 import result.Pipeline
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -54,7 +55,16 @@ class InterpreterTest {
     @Test
     fun testEmptyOr() {
         val exception = assertFails { Pipeline().setGrammar("root = [ABCDE]/") }
-        assertTrue((exception as PosError).msg.contains("Expected two children"))
+        assertTrue((exception as PosError).msg.contains("Empty expression"))
+    }
+
+    @Test
+    fun testRepeated() {
+        setGrammar("""
+           root = "A"{3} 
+        """)
+        assertParse("AAA", true, 3)
+        println(pipeline)
     }
 
     @Test

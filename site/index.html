@@ -69,40 +69,41 @@
                 <p>This is currently a <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG</a> parser
                     playground (but soon it&#39;ll be more than that).</p>
                 <h2 id="how-to-use">How to use</h2>
-                <p style="border-bottom: var(--gray) solid 1px; padding-bottom: 0.5em">First editor is to define a grammar, second is to check validity of an input. You can hover
+                <p style="border-bottom: var(--gray) solid 1px; padding-bottom: 0.5em">First editor is to define a
+                    grammar, second is to check validity of an input. You can hover
                     on operators in the grammar editor to see their meaning.</p>
                 <a href="https://github.com/llesha/CrateGram">github</a>
             </div>
         </div>
-        <div class="right panel">
-            <div id="editor"></div>
-            <div class="status-line">
-                <span id="grammar-error" style="float:left" class="error"></span>
+        <div class="right panel main-grid">
+            <div>
+                <div id="editor"></div>
+                <div class="status-line">
+                    <span id="grammar-error" style="float:left" class="error"></span>
+                </div>
+                <div id="playground"></div>
+              
+                <div style="width: 100%;">
+                    <div class="inline-row">
+                        <div class="status-grid">
+                            <div class="unselectable grid-cell grid-left">
+                                <i class="hidden fa-solid fa-xmark to-left" style="position:absolute;"></i>
+                                <div style="text-align: center;">Valid</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="inline-row" style="float:right">
+                        <div class="status-grid">
+                            <div class="unselectable grid-cell grid-right">
+                                <i class="hidden fa-solid fa-xmark to-left" style="position:absolute;"></i>
+                                <div style="text-align: center;">Invalid</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="playground"></div>
-            <!-- <div class="status-line">
-                <span></span>
-                <span style="float:right" class="unselectable hoverable clickable">Check
-                    <i class="fa-solid fa-arrow-right-long"></i></span>
-            </div> -->
-            <!-- <div id="input-status"><i class="fa-solid fa-check"></i></div> -->
-            <div style="width: 100%;">
-                <div class="inline-row">
-                    <div class="status-grid">
-                        <div class="unselectable grid-cell grid-left">
-                            <i class="hidden fa-solid fa-xmark to-left" style="position:absolute;"></i>
-                            <div style="text-align: center;">Valid</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="inline-row" style="float:right">
-                    <div class="status-grid">
-                        <div class="unselectable grid-cell grid-right">
-                            <i class="hidden fa-solid fa-xmark to-left" style="position:absolute;"></i>
-                            <div style="text-align: center;">Invalid</div>
-                        </div>
-                    </div>
-                </div>
+            <div id="ast">
+                <!-- <textarea style="white-space:pre-wrap;"></textarea> -->
             </div>
         </div>
         <div style="width:5%"></div>

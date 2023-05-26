@@ -10,6 +10,9 @@ export function addOrRemove(array, element) {
     return array
 }
 
+var asts = {}
+var highlighted
+
 export function addValueToTable(isSuccess, index, value) {
     let grids = document.getElementsByClassName("status-grid")
     let newCell = document.createElement("div")
@@ -20,6 +23,17 @@ export function addValueToTable(isSuccess, index, value) {
     if (isSuccess) {
         newCell.classList.add("grid-left")
         grids[0].appendChild(newCell)
+        let astNode = window.Interpreter.getAst()
+        asts[value] = JSON.stringify(JSON.parse(astNode.toJson()), null, 2)
+
+        newCell.onmouseenter = (event) => {
+            window.ast.setValue(asts[value])
+            if (highlighted != null && highlighted != newCell) {
+                highlighted.classList.remove("highlighted")
+            }
+            highlighted = newCell
+            highlighted.classList.add("highlighted")
+        }
     } else {
         newCell.classList.add("grid-right")
         grids[1].appendChild(newCell)

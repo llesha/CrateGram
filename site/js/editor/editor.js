@@ -35,31 +35,7 @@ function init() {
         monaco.editor.defineTheme("PEG-dark", themes.dracula);
 
         let storedGrammar = localStorage.getItem("grammar")
-        window.editor = monaco.editor.create(document.getElementById("editor"), {
-            value: storedGrammar != null ? storedGrammar : `root    = Expr
-Expr    = Sum
-Sum     = Product (("+" | "-") Product)*
-Product = Power (("*" | "/") Power)*
-Power   = Value ("^" Power)? 
-Value   = [0-9]+ | "(" Expr ")"`,
-            language: "PEG",
-            glyphMargin: true,
-            fontFamily: "Fira Code",
-            fontLigatures: true,
-            theme: `PEG-${getTheme()}`,
-            fontSize: 16,
-            automaticLayout: true,
-            minimap: {
-                enabled: false,
-            },
-            folding: false,
-            lineNumbers: "off",
-            lineDecorationsWidth: 0,
-            lineNumbersMinChars: 0,
-            bracketColorizationOptions: { enabled: false }
-        });
-
-        window.playground = monaco.editor.create(document.getElementById("playground"), {
+        let editorOptions = {
             value: ``,
             glyphMargin: true,
             fontFamily: "Fira Code",
@@ -75,6 +51,29 @@ Value   = [0-9]+ | "(" Expr ")"`,
             lineDecorationsWidth: 0,
             lineNumbersMinChars: 0,
             bracketColorizationOptions: { enabled: false }
+        }
+
+        window.editor = monaco.editor.create(document.getElementById("editor"), {
+            ...editorOptions,
+            value: storedGrammar != null ? storedGrammar : `# Hello world
+root =   welcome COMMA SPACE* subject punctuation !.
+
+welcome = ("Hello" | "Greetings" | "Salute") SPACE*
+subject = ("World" | "Grammar" | "PEG") SPACE*
+punctuation = [!?.] SPACE*
+
+COMMA = ","
+SPACE = " "`,
+            language: "PEG"
+        });
+
+        window.playground = monaco.editor.create(document.getElementById("playground"), {
+            ...editorOptions
+        });
+
+        window.ast = monaco.editor.create(document.getElementById("ast"), {
+            ...editorOptions,
+            folding: true
         });
 
         /**
@@ -171,8 +170,10 @@ Value   = [0-9]+ | "(" Expr ")"`,
                             errorElement.innerText = error.msg
                             showMarkers(error.msg,
                                 //TODO: change range bad names of fields
-
-                                error.position ?? { first: error.range.v1_1 - 1, second: error.range.w1_1 - 1 },
+                                error.position ?? {
+                                    first: error.range.v1_1 - 1,
+                                    second: error.range.w1_1 - 1
+                                },
                                 window.editor)
                         }
                     } finally {
@@ -215,7 +216,7 @@ Value   = [0-9]+ | "(" Expr ")"`,
 
         monaco.languages.registerHoverProvider("PEG", {
             provideHover: function (model, position) {
-                //  let tokens = model.getLineTokens(position.lineNumber);
+                // let tokens = model.getLineTokens(position.lineNumber);
                 // let currentTokenInfo = tokens._tokens[2 * tokens.findTokenIndexAtOffset(position.column) + 1];
                 let index = model.getOffsetAt(position);
                 let text = window.editor.getValue()
