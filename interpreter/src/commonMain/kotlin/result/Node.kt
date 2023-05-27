@@ -34,8 +34,8 @@ open class Node(
   ${" ".repeat(offset)}"$name": ${children.first().toJson(offset + 2)}
 ${" ".repeat(offset)}}""".trimMargin()
         }
-        if (children.isEmpty())
-            throw InterpreterError("Unexpected empty node")
+//        if (children.isEmpty())
+//            throw InterpreterError("Unexpected empty node")
         return """${" ".repeat(offset)}{
   ${" ".repeat(offset)}"$name": [
     ${" ".repeat(offset)}${children.joinToString(separator = ", ") { it.toJson() }}

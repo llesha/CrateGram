@@ -59,10 +59,11 @@ function init() {
 root =   welcome COMMA SPACE* subject punctuation !.
 
 welcome = ("Hello" | "Greetings" | "Salute") SPACE*
-subject = ("World" | "Grammar" | "PEG") SPACE*
+subject = [A-Z][a-z]* SPACE*
 punctuation = [!?.] SPACE*
 
-COMMA = ","
+
+COMMA = "," 
 SPACE = " "`,
             language: "PEG"
         });

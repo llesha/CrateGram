@@ -25,6 +25,7 @@ class Pipeline {
     }
 
     fun getAst(): Node {
+        AstTransformer(interpreter.ast).transformAst()
         return interpreter.ast
     }
 
