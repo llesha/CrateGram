@@ -1,6 +1,7 @@
 package result
 
 import InterpreterError
+import reductions.transformRules
 import token.IdentToken
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
@@ -10,16 +11,15 @@ import kotlin.js.JsName
 @OptIn(ExperimentalJsExport::class)
 @JsExport
 class Pipeline {
-    private val interpreter = Interpreter(mutableMapOf())
+    val interpreter = Interpreter(mutableMapOf())
 
 
     @JsName("setGrammar")
     fun setGrammar(grammar: String): Pipeline {
         val rules = Parser(Lexer(grammar).tokenize()).parse()
-        val ruleTransformer = RuleTransformer(rules)
-        ruleTransformer.transformRules()
-        ruleTransformer.rules[IdentToken("root")] ?: throw InterpreterError("`root` rule is required")
-        interpreter.rules.putAll(ruleTransformer.rules)
+        transformRules(rules)
+        //ruleTransformer.rules[IdentToken("root")] ?: throw InterpreterError("`root` rule is required")
+        interpreter.rules.putAll(rules)
 
         return this
     }

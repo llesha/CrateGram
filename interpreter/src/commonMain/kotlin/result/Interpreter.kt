@@ -1,6 +1,7 @@
 package result
 
 import InterpreterError
+import DOT_EXCEPTIONS
 import token.*
 
 /**
@@ -45,10 +46,6 @@ import token.*
  *
  */
 class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
-    /**
-     * List of characters not recognized by [AnyToken]
-     */
-    private val dotExceptions = "\n\r\u2028\u2029"
     val ast = Node("root")
     private var currentParent = ast
 
@@ -76,6 +73,7 @@ class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
             }
 
             is Group -> return withAst {
+                println(token)
                 var changedIndex = index
                 for (child in token.children) {
                     val next = followedBy(child, text, changedIndex)
@@ -108,25 +106,8 @@ class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
             is CharacterClass -> return withAstValue(text, index) {
                 if (index >= text.length)
                     return@withAstValue false to index
-                val variants = token.variants
-                if (text[index] == '\\') {
-                    if (index + 1 >= text.length)
-                        return@withAstValue false to index
-                    variants.ranges.forEach {
-                        // TODO: create function that will create real escapes and then make ranges with them
-                        if (it.firstEscaped && text[index + 1] in it.range)
-                            return@withAstValue true to index + 2
-                    }
-                    return@withAstValue if (text[index] in variants.escaped)
-                        true to index + 2
-                    else
-                        false to index
-                }
-                variants.ranges.forEach {
-                    if (!it.firstEscaped && text[index] in it.range)
-                        return@withAstValue true to index + 1
-                }
-                return@withAstValue if (text[index] in variants.normal)
+                val variants = token.getVariants()
+                return@withAstValue if (text[index] in variants)
                     true to index + 1
                 else
                     false to index
@@ -154,7 +135,7 @@ class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
             }
 
             is AnyToken -> return withAst {
-                if (index >= text.length || text[index] in dotExceptions)
+                if (index >= text.length || text[index] in DOT_EXCEPTIONS)
                     return@withAst false to index
                 return@withAst true to index + 1
             }

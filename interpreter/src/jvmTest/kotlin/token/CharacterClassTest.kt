@@ -7,7 +7,7 @@ class CharacterClassTest {
     @Test
     fun testRanges() {
         val characterClass = CharacterClass("213\\t\\-1-2\\--r")
-        val variants = characterClass.variants
+        val variants = characterClass.getVariants()
         println(variants)
     }
 }

@@ -7,5 +7,5 @@ class AndPredicate(position: IntRange, child: Token) : Prefix("&", position, chi
 }
 
 class NotPredicate(child: Token, position: IntRange = -1..-1) : Prefix("!", position, child) {
-    override fun toString(): String = "!$child"
+    override fun toString(): String = "!${if (child is Or) "($child)" else child}"
 }

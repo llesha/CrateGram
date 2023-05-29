@@ -1,4 +1,4 @@
-import result.RuleTransformer
+import reductions.transformRules
 import result.Interpreter
 import result.Lexer
 import result.Parser
@@ -12,7 +12,7 @@ class LexerTest {
     fun testLexer() {
         val text = """a = ("A") "B" "C" "D" | [AB]"""
         val rules = Parser(Lexer(text).tokenize()).parse()
-        RuleTransformer(rules).transformRules()
+        transformRules(rules)
         println(rules.toList().joinToString(separator = "\n"))
     }
 
@@ -93,8 +93,7 @@ class LexerTest {
         )
         val parser = Parser(tokens)
         val rules = parser.parse()
-        val transformer = RuleTransformer(rules)
-        transformer.transformRules()
+        transformRules(rules)
         println(rules.toList().joinToString(separator = "\n"))
         val interpreter = Interpreter(rules)
         val res = interpreter.parseInput("1+2")

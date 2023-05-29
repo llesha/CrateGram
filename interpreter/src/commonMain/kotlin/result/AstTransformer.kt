@@ -10,7 +10,7 @@ class AstTransformer(val ast: Node) {
 
     private fun transformNode(node: Node): Node {
         if (node.children.size > 1)
-            node.children.inPlaceFilter { it !is ValueNode && !it.name.startsWith("_") }
+            node.children.inPlaceFilter { it !is ValueNode && !it.name.startsWith("__") }
         when (node.name) {
             "*", "+" -> {
                 node.children.inPlaceFilter { it.name != "" }

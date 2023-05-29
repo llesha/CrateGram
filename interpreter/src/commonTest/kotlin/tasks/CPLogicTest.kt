@@ -78,16 +78,14 @@ class CPLogicTest {
     @Test
     fun testCPLogic4() {
         setGrammar(
-            """
-             # does not have shady green and red together (1 and 4)
-root = (no1+ | no4+) !.
+            """# does not have shady green and red together (1 and 4)
+root = no1+ !. | no4+ !.
 
 no1 = "2" | "3" | "4"
-no4 = "1" | "2" | "3"
-
-TERM = "1" | "2" | "3" | "4""""
+no4 = "1" | "2" | "3""""
         )
 
+        assertParse("21", true, 2)
         assertParse("12", true, 2)
         assertParse("112312", true, 6)
 

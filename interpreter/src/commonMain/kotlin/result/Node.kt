@@ -1,10 +1,8 @@
 package result
 
-import InterpreterError
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 import kotlin.js.JsName
-import kotlin.time.times
 
 /**
  * Represents leaf node without children
