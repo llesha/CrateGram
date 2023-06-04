@@ -13,12 +13,12 @@ import token.*
 fun stage1(rules: Rules) {
     //addNewRules(rules)
 
-  //  do {
-        val keysFixed = rules.keys.toSet()
-        for (key in keysFixed)
-            rules[key] = rules.f(rules[key]!!.child).toRule()
-        val keysDiff = rules.keys - keysFixed
-  //  } while(keysDiff.isNotEmpty())
+    //  do {
+    val keysFixed = rules.keys.toSet()
+    for (key in keysFixed)
+        rules[key] = rules.f(rules[key]!!.child).toRule()
+    val keysDiff = rules.keys - keysFixed
+    //  } while(keysDiff.isNotEmpty())
 }
 
 fun addNewRules(rules: Rules) {
@@ -35,8 +35,9 @@ fun addNewRules(rules: Rules) {
  * * f(e) <- e; in other cases
  */
 private fun Rules.f(e: Token): Token {
-    when (e) {
-        is Group -> {
+    when (e.getRepr(1)) {
+        "(e e)" -> {
+            e as Group
             val first = makeIdentIfNot(e.children[0], this)
             val second = makeIdentIfNot(e.children[1], this)
             if (isNewIdent(first, this))
@@ -47,7 +48,8 @@ private fun Rules.f(e: Token): Token {
             e.children[1] = second
         }
 
-        is Or -> {
+        "e / e" -> {
+            e as Or
             val first = makeIdentIfNot(e.children[0], this)
             val second = makeIdentIfNot(e.children[1], this)
             if (isNewIdent(first, this))
@@ -58,17 +60,18 @@ private fun Rules.f(e: Token): Token {
             e.children[1] = Group(NotPredicate(first), second)
         }
 
-        is NotPredicate -> {
+        "!e" -> {
+            e as NotPredicate
             if (e.child is IdentToken)
                 return e
             val name = generateNonTerminalName(this)
             this[name] = this.f(e.child).toRule()
             e.child = name
         }
-        is Literal -> {
-            if(e == Token.empty())
+
+        else -> {
+            if (e == Token.empty())
                 return Token.emptyRule()
-            return e
         }
     }
     return e

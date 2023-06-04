@@ -1,3 +1,5 @@
+import { getTheme } from "../loader.js";
+
 const config = {
     surroundingPairs: [
         {
@@ -78,7 +80,7 @@ const tokenizer = {
             },
         ],
 
-        [/\d+/, "number"],
+        // [/\d+/, "number"],
 
         // strings
         [/"([^"\\]|\\.)*$/, "string"], // non-terminated string
@@ -168,10 +170,10 @@ const tokenizer = {
     ]
 }
 
-let groupHint = `<strong>Group</strong> - groups tokens into one`
-let classHint = `<strong>Character Class</strong> - matches<br>a single character from set `
-let orHint = `<strong>Choice</strong> - equivalent to boolean OR`
-let ruleHint = `<strong>Rule</strong> - declares a rule with name<br> similar to previous token`
+const groupHint = `<strong>Group</strong> - groups tokens into one`
+const classHint = `<strong>Character Class</strong> - matches<br>a single character from set `
+const orHint = `<strong>Choice</strong> - equivalent to boolean OR`
+const ruleHint = `<strong>Rule</strong> - declares a rule with name<br> similar to previous token`
 
 const hoverHints = {
     "*": `<strong>Quantifier</strong> - matches the previous token<br>
@@ -204,4 +206,56 @@ const hoverHints = {
     range between <br>`
 }
 
-export { config, tokenizer, hoverHints }
+const tokensProvider = {
+    keywords: [
+        "root",
+    ],
+    operators: [
+        "=", "<-",
+
+        "!", "&",
+
+        "*", "+", "?",
+        "-", ".", // regex
+
+        "|", "/",
+    ],
+    // we include these common regular expressions
+    symbols: /[=><!?:&|+\-*\/%]+/,
+    // C# style strings
+    escapes:
+        /\\(?:[abfnrtv\\"']|x[\dA-Fa-f]{1,4}|u[\dA-Fa-f]{4}|U[\dA-Fa-f]{8})/,
+    tokenizer: tokenizer
+}
+
+
+const editorOptions = {
+    value: ``,
+    glyphMargin: true,
+    fontFamily: "Fira Code",
+    fontLigatures: true,
+    theme: `PEG-${getTheme()}`,
+    fontSize: 16,
+    automaticLayout: true,
+    minimap: {
+        enabled: false,
+    },
+    folding: false,
+    lineNumbers: "off",
+    lineDecorationsWidth: 0,
+    lineNumbersMinChars: 0,
+    bracketColorizationOptions: { enabled: false }
+}
+
+const defaultGrammar = `# Hello world
+root =   welcome COMMA SPACE* subject punctuation !.
+
+welcome = ("Hello" | "Greetings" | "Salute") SPACE*
+subject = [A-Z][a-z]* SPACE*
+punctuation = [!?.] SPACE*
+
+
+COMMA = "," 
+SPACE = " "`
+
+export { config, hoverHints, tokensProvider, editorOptions, defaultGrammar }

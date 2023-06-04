@@ -1242,7 +1242,7 @@ define("vs/editor/editor.main.nls", {
 	],
 	"vs/editor/contrib/readOnlyMessage/browser/contribution": [
 		"Cannot edit in read-only input",
-		"Cannot edit in read-only editor"
+		"Fix grammar"
 	],
 	"vs/editor/contrib/rename/browser/rename": [
 		"No result.",

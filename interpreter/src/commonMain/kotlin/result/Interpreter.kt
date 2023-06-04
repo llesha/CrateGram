@@ -1,7 +1,6 @@
 package result
 
 import InterpreterError
-import DOT_EXCEPTIONS
 import token.*
 
 /**
@@ -49,6 +48,11 @@ class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
     val ast = Node("root")
     private var currentParent = ast
 
+    /**
+     * List of characters not recognized by [AnyToken]
+     */
+    var dotExceptions = "\n\r"
+
     fun parseInput(text: String): Pair<Boolean, Int> {
         ast.children.clear()
         currentParent = ast
@@ -73,7 +77,6 @@ class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
             }
 
             is Group -> return withAst {
-                println(token)
                 var changedIndex = index
                 for (child in token.children) {
                     val next = followedBy(child, text, changedIndex)
@@ -135,7 +138,7 @@ class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
             }
 
             is AnyToken -> return withAst {
-                if (index >= text.length || text[index] in DOT_EXCEPTIONS)
+                if (index >= text.length || text[index] in dotExceptions)
                     return@withAst false to index
                 return@withAst true to index + 1
             }

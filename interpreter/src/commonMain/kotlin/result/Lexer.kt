@@ -74,7 +74,7 @@ class Lexer(private val text: String) {
                 return tokenClass(tokenValue, startIndex until index)
             }
         }
-        val identRegex = Regex("[\\w]+")
+        val identRegex = Regex("[a-zA-Z_]\\w*")
         if (text[index].toString().matches(identRegex)) {
             val tokenValue = getTextWhileMatches(identRegex)
             return IdentToken(tokenValue, startIndex..index)
@@ -154,9 +154,6 @@ class Lexer(private val text: String) {
             Triple('"', '"') { value: String, position: IntRange -> Literal(value, position) },
             Triple('\'', '\'') { value: String, position: IntRange -> Literal(value, position) },
             Triple('[', ']') { value: String, position: IntRange ->
-                if (value == "")
-                    Literal("", position)
-                else
                     CharacterClass(value, position)
             },
             Triple('{', '}') { value: String, position: IntRange ->

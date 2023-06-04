@@ -13,3 +13,150 @@
 .big-text {
     font-size: xx-large;
 }
+
+.switch {
+    display: inline-block;
+    height: 1em;
+    position: relative;
+    width: 2em;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    background-color: #ccc;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: .4s;
+}
+
+.switch .slider:before {
+    background-color: var(--bg-color);
+    bottom: 0.15em;
+    content: "";
+    height: 0.7em;
+    left: 0.2em;
+    position: absolute;
+    transition: .4s;
+    width: 0.7em;
+}
+
+input:checked+.slider {
+    background-color: var(--middle-color);
+}
+
+input:checked+.slider:before {
+    transform: translateX(0.9em);
+}
+
+.slider.round {
+    border-radius: 1em;
+}
+
+.slider.round:before {
+    border-radius: 1em;
+}
+
+
+/* .monaco-editor-container {
+    filter: saturate(20) sepia(0.8);
+    transition: .4s;
+} */
+
+.lines-content,
+.monaco-editor-background {
+    transition: .4s;
+}
+
+.margin[role=presentation] {
+    transition: .4s;
+}
+
+#editor>* {
+    transition: .4s;
+}
+
+#descr {
+    position: absolute;
+    font-size: small;
+    border: 1px solid var(--main-color);
+    background-color: var(--bg-color);
+    z-index: 5;
+    white-space: pre-line;
+}
+
+input {
+    font-family: 'Fira Code';
+    color: var(--main-color);
+    background-color: var(--bg-color);
+    transition-property: color;
+    transition-duration: .4s;
+    transition-timing-function: ease-out;
+}
+
+input[type="number"],
+input[type="text"] {
+    width: 4em;
+    border-radius: 0.3em;
+    padding-left: 5px;
+    padding-top: 1px;
+}
+
+input[type="number"]::-webkit-inner-spin-button {
+    opacity: 0.2;
+}
+
+.error {
+    color: var(--red)
+}
+
+#spinner {
+    animation: spin 2s linear infinite;
+    color: var(--light-gray);
+    font-size: small;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#dot-exceptions-input {
+    width: 4em;
+    border-radius: 0px;
+    border-color: transparent;
+    margin-left: -12px;
+    margin-right: -12px;
+    color: var(--bracket-color);
+    /* margin-top: -4px; */
+    transition: margin .0s ease;
+    transition: color .4s ease;
+}
+
+.tb-letter:before {
+    margin-left: 2px;
+    content: "B";
+    font-family: 'Fira Code';
+    font-weight: 100;
+    color: var(--gray);
+}
+
+.menu-down {
+    transform: rotate(90deg);
+    transition: .2s;
+}
+
+.menu-right {
+    transition: .2s;
+}

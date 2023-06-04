@@ -1,0 +1,9 @@
+# start and end are of different color
+root = (no1 (TERM &TERM)* "1" | no2 (TERM &TERM)* "2" | no3 (TERM &TERM)* "3" | no4 (TERM &TERM)* "4") !.
+
+no1 = "2" | "3" | "4"
+no2 = "1" | "3" | "4"
+no3 = "1" | "2" | "4"
+no4 = "1" | "2" | "3"
+
+TERM = "1" | "2" | "3" | "4"

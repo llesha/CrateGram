@@ -1,0 +1,4 @@
+# exactly three red segments
+root = no1* "1" no1* "1" no1* "1" no1*
+
+no1 = "2" | "3" | "4"

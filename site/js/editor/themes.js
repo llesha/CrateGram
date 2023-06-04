@@ -56,7 +56,7 @@ var dracula = {
         "editor.foreground": "#cfcfc2",
         "editor.background": "#282a36",
         "editor.selectionBackground": "#44475a",
-        "editor.lineHighlightBackground": "#44475a",
+        // "editor.lineHighlightBackground": "#44475a",
         "editorCursor.foreground": "#cfcfc2",
         "editorWhitespace.foreground": "#3B3A32",
         "editorIndentGuide.activeBackground": "#9D550FB0",

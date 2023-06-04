@@ -1,3 +1,4 @@
+window.currentGrammar = "playground"
 require.config({
     paths: {
         vs: "monaco-editor/min/vs",
@@ -40,8 +41,8 @@ function updateFontSize(size) {
         window.editor.updateOptions({
             fontSize: size,
         });
-        if (window.playground != null) {
-            window.playground.updateOptions({
+        if (window.textEditor != null) {
+            window.textEditor.updateOptions({
                 fontSize: size,
             });
         }
@@ -51,7 +52,7 @@ function updateFontSize(size) {
 
 function updateDebounce(ms) {
     if (ms == null)
-        ms = 1000
+        ms = 500
     localStorage.setItem("debounce", ms)
     document.getElementById("debounce-input").value = ms
 }
@@ -59,7 +60,30 @@ function updateDebounce(ms) {
 updateDebounce(localStorage.getItem("debounce"))
 
 function getDebounce() {
-    return localStorage.getItem("debounce")
+    return localStorage.getItem("debounce") ?? 500
 }
 
-export { setTheme, getTheme, updateFontSize, updateDebounce, getDebounce };
+function updateAstView(hasAst) {
+    localStorage.setItem("ast", hasAst)
+    document.getElementById("ast-toggle").checked = hasAst
+
+    if (!hasAst) {
+        document.getElementById("ast").style.display = "none"
+        document.getElementsByClassName("main-grid")[0].style.gridTemplateColumns = "100% 0%"
+    } else {
+        document.getElementById("ast").style.display = "block"
+        document.getElementsByClassName("main-grid")[0].style.gridTemplateColumns = "70% 30%"
+    }
+}
+
+updateAstView(localStorage.getItem("ast") ?? true)
+
+export function setDotExceptions(newExceptionsText) {
+    document.getElementById("dot-exceptions-input").value = newExceptionsText
+    document.getElementById("dot-exceptions-input").style.width = newExceptionsText.length + "ch"
+    localStorage.setItem("dotExceptions", newExceptionsText)
+}
+
+setDotExceptions(localStorage.getItem("dotExceptions") ?? "\n\r")
+
+export { setTheme, getTheme, updateFontSize, updateDebounce, getDebounce, updateAstView };

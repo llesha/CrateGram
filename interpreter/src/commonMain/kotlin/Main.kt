@@ -7,10 +7,6 @@ import kotlin.random.Random
 
 val pipeline = Pipeline()
 
-/**
- * List of characters not recognized by [AnyToken]
- */
-const val DOT_EXCEPTIONS = "\n\r\u2028\u2029"
 val random = Random
 
 @OptIn(ExperimentalJsExport::class)
