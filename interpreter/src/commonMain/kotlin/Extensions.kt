@@ -2,6 +2,8 @@ import token.IdentToken
 import token.Literal
 import token.Rule
 import token.Token
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 typealias Rules = MutableMap<IdentToken, Rule>
 
@@ -10,6 +12,17 @@ inline fun <T : Any, R> T?.ifNotNull(action: T.() -> R) = if (this != null) acti
 fun List<Token>.listRange() = first().range.first..last().range.last
 
 fun <T> List<T>.subList(start: Int) = this.subList(start, size).toMutableList()
+
+fun Int.rangeOfLength(length: Int) = this..this + length
+
+@OptIn(ExperimentalJsExport::class)
+@JsExport
+fun IntRange.getStarting() = start
+
+@OptIn(ExperimentalJsExport::class)
+@JsExport
+fun IntRange.getEnding() = last
+
 
 var index = 0
 

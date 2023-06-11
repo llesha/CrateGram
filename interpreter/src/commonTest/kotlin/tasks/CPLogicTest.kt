@@ -85,6 +85,9 @@ no1 = "2" | "3" | "4"
 no4 = "1" | "2" | "3""""
         )
 
+        pipeline.interpreter.dotExceptions = ""
+
+        assertParse("24\n312", false, 0)
         assertParse("21", true, 2)
         assertParse("12", true, 2)
         assertParse("112312", true, 6)

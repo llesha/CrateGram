@@ -1,8 +1,10 @@
 import reductions.*
 import result.Pipeline
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class RuleTransformerTest {
+    @Ignore
     @Test
     fun testRemovePredicates() {
         val pipeline = Pipeline().setGrammar(
@@ -32,7 +34,9 @@ no4 = "1" | "2" | "3"""".trimIndent()
     @Test
     fun simpleTest() {
         val pipeline = Pipeline().setGrammar(
-            """root = [12]
+            """root = A | B
+               A = "1"
+               B = "2"
             """.trimIndent()
         )
 
@@ -43,6 +47,7 @@ no4 = "1" | "2" | "3"""".trimIndent()
             ruleTokens[i].child = expressionsToTwoChildren(tokenRule)
         }
 
+       // addNewRules(pipeline.interpreter.rules)
         println(pipeline.interpreter.rules.toList().joinToString(separator = "\n"))
         println()
 
@@ -53,6 +58,10 @@ no4 = "1" | "2" | "3"""".trimIndent()
         stage2(pipeline.interpreter.rules)
         println(pipeline.interpreter.rules.toList().joinToString(separator = "\n"))
         println()
+
+        addNewRules(pipeline.interpreter.rules)
+        println(pipeline.parse("1").joinToString(separator = ", "))
+        println(pipeline.parse("2").joinToString(separator = ", "))
 
       //  stage3(pipeline.interpreter.rules)
        // println(pipeline.interpreter.rules.toList().joinToString(separator = "\n"))

@@ -1,0 +1,1 @@
+fix `Fix grammar` msg when task grammar is opened automatically on task opening

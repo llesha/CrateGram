@@ -26,19 +26,19 @@ private fun transformToken(token: Token, rules: Rules): Token {
         token.children.clear()
         token.children.addAll(newChildren.map { transformToken(it, rules) })
         if (token.children.size < 2 && token is Or) {
-            throw ParserError("Expected two children or more in Or expression", token.range)
+            throw ParserError("expected two children or more in Or expression", token.range)
         }
         if (token.children.size == 1) {
             return token.children.first()
         }
         if (token.children.isEmpty())
-            throw ParserError("Empty expression", token.range)
+            throw ParserError("empty expression", token.range)
     } else if (token is OneChildToken) {
         token.child = transformToken(token.child, rules)
         if (token is Suffix)
             return rules.removeQuantifier(token)
     } else if (token is IdentToken && !rules.keys.map { it.hashCode() }.contains(token.hashCode())) {
-        throw ParserError("No rule named $token", token.range)
+        throw ParserError("no rule named $token", token.range)
     }
     return token
 }

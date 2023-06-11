@@ -10,4 +10,11 @@ class CharacterClassTest {
         val variants = characterClass.getVariants()
         println(variants)
     }
+
+    @Test
+    fun testEmpty() {
+        val characterClass = CharacterClass("")
+        val variants = characterClass.getVariants()
+        println(variants)
+    }
 }

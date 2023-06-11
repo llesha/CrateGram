@@ -1,6 +1,24 @@
 package token
 
+import ParserError
+
 abstract class Token(val symbol: String, var range: IntRange) {
+    fun copy(): Token {
+        return when (this) {
+            is IdentToken -> IdentToken(symbol, range)
+            is Literal -> Literal(symbol, range)
+            is AnyToken -> AnyToken(range)
+            is NotPredicate -> NotPredicate(child.copy())
+            is Group -> children[0].copy() and children[1].copy()
+            is Or -> children[0].copy() / children[1].copy()
+            else -> throw Exception("Cannot clone $this")
+        }
+    }
+
+    open fun getRepr(level: Int = 1): String {
+        throw ParserError("getRepr shouldn't be called for $symbol")
+    }
+
     override fun toString(): String = symbol
 
     override fun hashCode(): Int {
@@ -17,31 +35,6 @@ abstract class Token(val symbol: String, var range: IntRange) {
 
     fun toRule(): Rule = Rule(this)
 
-    companion object {
-        /**
-         * @return ε
-         */
-        fun empty() = Literal("")
-
-        /**
-         * @return F
-         */
-        fun fail() = IdentToken("\$F")
-
-        /**
-         * @return Z
-         */
-        fun any() = IdentToken("\$Z")
-
-        /**
-         * @return T
-         */
-        fun anyTerminal() = IdentToken("\$T")
-
-        fun emptyRule() = IdentToken("\$E")
-
-    }
-
     operator fun div(other: Token): Or {
         return Or(mutableListOf(this, other))
     }
@@ -53,18 +46,36 @@ abstract class Token(val symbol: String, var range: IntRange) {
     infix fun and(other: Token): Group {
         return Group(this, other)
     }
+
+    companion object {
+        /** @return ε */
+        fun empty() = Literal("")
+
+        /** @return F */
+        fun fail() = IdentToken("\$F")
+
+        /** @return Z */
+        fun any() = IdentToken("\$Z")
+
+        /** @return T */
+        fun anyTerminal() = IdentToken("\$T")
+
+        fun emptyRule() = IdentToken("\$E")
+    }
 }
 
 abstract class OneChildToken(symbol: String, range: IntRange, var child: Token) : Token(symbol, range)
 
-class Literal(symbol: String, range: IntRange = -1..-1) : Token(symbol, range), Terminal {
-    override fun toString(): String = """"$symbol""""
-}
-
 /**
  * root - is a starting rule
  */
-open class IdentToken(symbol: String, range: IntRange = -1..-1) : Token(symbol, range), Terminal {
+open class IdentToken(symbol: String, range: IntRange = -1..-1) : Token(symbol, range) {
+    override fun getRepr(level: Int): String {
+        if (level == 0)
+            return "e"
+        return "N"
+    }
+
     /**
      * To convert GeneratedToken to IdentToken
      */
@@ -73,7 +84,11 @@ open class IdentToken(symbol: String, range: IntRange = -1..-1) : Token(symbol, 
     }
 }
 
-class AnyToken(range: IntRange = -1..-1) : Token(".", range), Terminal
+class AnyToken(range: IntRange = -1..-1) : Token(".", range) {
+    override fun getRepr(level: Int): String {
+        return "a"
+    }
+}
 
 class TempToken(symbol: String, range: IntRange = -1..-1) : Token(symbol, range)
 

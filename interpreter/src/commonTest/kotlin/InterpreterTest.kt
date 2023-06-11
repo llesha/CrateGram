@@ -1,7 +1,6 @@
 import TestFactory.assertParse
 import result.Pipeline
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
@@ -9,34 +8,37 @@ class InterpreterTest {
 
     @Test
     fun testOneRuleGrammar() {
-        val pipeline = Pipeline().setGrammar("""root = 'A'""")
-        assertParseResult(pipeline.parse("A"), mutableListOf(true, 1))
+        setGrammar("""root = 'A'""")
+        assertParse("A", true, 1)
     }
 
     @Test
     fun testSimpleGrammar() {
-        val pipeline = Pipeline().setGrammar("""root = ("a"+ | "b") [AB]""".trimMargin())
-        assertParseResult(pipeline.parse("bA"), mutableListOf(true, 2))
-        assertParseResult(pipeline.parse("bB"), mutableListOf(true, 2))
+        setGrammar("""root = ("a"+ | "b") [AB]""".trimMargin())
+        assertParse("bA", true, 2)
+        assertParse("bB", true, 2)
 
-        assertParseResult(pipeline.parse("aA"), mutableListOf(true, 2))
-        assertParseResult(pipeline.parse("aaaaaA"), mutableListOf(true, 6))
-        assertParseResult(pipeline.parse("aaaaB"), mutableListOf(true, 5))
-        assertParseResult(pipeline.parse("B"), mutableListOf(false, 0))
+        assertParse("aA", true, 2)
+        assertParse("aaaaaA", true, 6)
+        assertParse("aaaaB", true, 5)
+        assertParse("B", false, 0)
     }
 
     @Test
     fun testParentheses() {
-        val pipeline = Pipeline().setGrammar(
+        setGrammar(
             """
             root = ([0-9]+ | "(" [ABC] ")") " "*
         """
         )
+
+        assertParse("12", true)
+        assertParse("(A)", true)
     }
 
     @Test
     fun testNumbers() {
-        val pipeline = Pipeline().setGrammar(
+        setGrammar(
             """
             Value   = ([0-9]+ | "(" Expr ")") Space
             root    = Expr
@@ -47,24 +49,21 @@ class InterpreterTest {
             Space = " "*
             """
         )
-        println(pipeline.parse("12"))
-        println(pipeline.parse("(12)"))
-        println(pipeline.parse("(12+23*3^3)"))
+        assertParse("12", true)
+        assertParse("(12)", true)
+        assertParse("(12+23*3^3)", true)
     }
 
     @Test
     fun testEmptyOr() {
         val exception = assertFails { Pipeline().setGrammar("root = [ABCDE]/") }
-        assertTrue((exception as PosError).msg.contains("Empty expression"))
+        assertTrue((exception as PosError).msg.contains("empty expression"))
     }
 
     @Test
     fun testRepeated() {
-        setGrammar("""
-           root = "A"{3} 
-        """)
+        setGrammar("""root = "A"{3}""")
         assertParse("AAA", true, 3)
-        println(pipeline)
     }
 
     @Test
@@ -116,12 +115,67 @@ class InterpreterTest {
         """.trimIndent()
         )
         pipeline.parse("11")
-
     }
 
+    @Test
+    fun testExtraIdents() {
+        val exception = assertFails {
+            setGrammar(
+                """
+            Hello world
+            root = welcome COMMA SPACE* subject punctuation !.
 
-    private fun assertParseResult(parseResult: Array<Any>, expected: List<Any>) {
-        assertEquals(parseResult[0] as Boolean, expected[0] as Boolean)
-        assertEquals(parseResult[1] as Int, expected[1] as Int)
+            welcome = ("Hello" | "Greetings" | "Salute") SPACE*
+            subject = [A-Z][a-z]* SPACE*
+
+            punctuation = [!?.]
+            COMMA = ","
+            SPACE = [ ]
+        """.trimIndent()
+            )
+        }
+    }
+
+    @Test
+    fun testEmptyCharacterClass() {
+        setGrammar(
+            """
+            root = welcome COMMA SPACE* subject punctuation !.
+
+            welcome = ("Hello" | "Greetings" | "Salute") SPACE*
+            subject = [A-Z][a-z]* SPACE*
+
+            punctuation = [!?.]
+            COMMA = ","
+            SPACE = []
+        """
+        )
+
+        assertParse("Hello,A!", true)
+
+        assertParse("Hello, A!", false)
+    }
+
+    @Test
+    fun testEscapedGrammar() {
+        setGrammar("""root = "\"2\"" | "\n\r\b\t\'\\" """)
+        assertParse(""""2"""", true)
+        assertParse("\n\r\b\t\'\\", true)
+
+        setGrammar("""root = [\]"]""")
+        assertParse("""]""", true)
+        assertParse(""""""", true)
+
+        setGrammar("""root =  [\]\'\"\-\b\n\t\r] """)
+        assertParse("]", true)
+        assertParse("'", true)
+        assertParse("\"", true)
+        assertParse("-", true)
+        assertParse("\b", true)
+        assertParse("\n", true)
+        assertParse("\t", true)
+        assertParse("\r", true)
+
+        assertParse("r", false)
     }
 }

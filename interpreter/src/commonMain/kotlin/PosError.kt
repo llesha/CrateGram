@@ -1,5 +1,7 @@
+import kotlin.js.JsExport
 import kotlin.js.JsName
 
+@JsExport
 abstract class PosError(
     @JsName("msg") val msg: String,
     @JsName("range") val range: IntRange?,
@@ -7,8 +9,8 @@ abstract class PosError(
 ) :
     Throwable() {
 // https://youtrack.jetbrains.com/issue/KT-58856/Kotlin-JS-Cannot-override-message-in-Throwable
-    override val message: String?
-        get() = msg + " at ${range ?: position}"
+//    override val message: String?
+//        get() = msg + " at ${range ?: position}"
 }
 
 class LexerError(msg: String, range: IntRange? = null, position: Int? = null) : PosError(msg, range, position)

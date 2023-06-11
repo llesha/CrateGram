@@ -30,7 +30,7 @@ class Parser(private val rules: List<List<Token>>) {
         val ruleToken = if (stack.isNotEmpty()) {
             val res = addOr()
             if (stack.isNotEmpty())
-                throw ParserError("Parenthesis does not have a closing pair")
+                throw ParserError("parenthesis does not have a closing pair")
             res
         } else if (currentRule.size == 1) currentRule.first()
         else Group(currentRule.toMutableList())
@@ -39,11 +39,11 @@ class Parser(private val rules: List<List<Token>>) {
 
     private fun makeRuleChecks(rule: List<Token>) {
         if (rule.size < 3)
-            throw ParserError("Expected at least three tokens for rule: ident, =, expression", rule.listRange())
+            throw ParserError("expected at least three tokens for rule: ident, =, expression", rule.listRange())
         if (rule[1].symbol != "=")
-            throw ParserError("Expected = as second token, got ${rule[1]}", rule[1].range)
+            throw ParserError("expected = as second token, got ${rule[1]}", rule[1].range)
         if (rule.first() !is IdentToken)
-            throw ParserError("Expected identifier as non-terminal name")
+            throw ParserError("expected identifier as non-terminal name")
     }
 
     private fun parseUntil(tokens: List<Token>, condition: String, addToRule: Boolean = true) {
@@ -66,7 +66,7 @@ class Parser(private val rules: List<List<Token>>) {
                         stack.add("(" to idx)
                         parseUntil(tokens, ")")
                         if (index >= tokens.size)
-                            throw ParserError("Parenthesis does not have a closing pair", tokens[parenIdx].range)
+                            throw ParserError("parenthesis does not have a closing pair", tokens[parenIdx].range)
                         val children = if (stack.last().first == "|") {
                             mutableListOf(addOr())
                         } else {
@@ -94,7 +94,7 @@ class Parser(private val rules: List<List<Token>>) {
                     "*" -> checkForRuleAndPrefix(Star(index..index++, surePopPrevious(tokens[index - 1])))
                     "+" -> checkForRuleAndPrefix(Plus(index..index++, surePopPrevious(tokens[index - 1])))
                     "?" -> checkForRuleAndPrefix(QuestionMark(index..index++, surePopPrevious(tokens[index - 1])))
-                    else -> throw ParserError("Unexpected token ${tokens[index]}", tokens[index].range)
+                    else -> throw ParserError("unexpected token ${tokens[index]}", tokens[index].range)
                 }
             }
 
@@ -106,7 +106,7 @@ class Parser(private val rules: List<List<Token>>) {
             }
 
             is AnyToken, is IdentToken, is Literal, is CharacterClass -> tokens[index++]
-            else -> throw ParserError("Unexpected token ${tokens[index]}", tokens[index].range)
+            else -> throw ParserError("unexpected token ${tokens[index]}", tokens[index].range)
         }
     }
 
@@ -154,6 +154,6 @@ class Parser(private val rules: List<List<Token>>) {
     }
 
     private fun surePopPrevious(token: Token): Token {
-        return currentRule.removeLastOrNull() ?: throw ParserError("Expected token before $token", token.range)
+        return currentRule.removeLastOrNull() ?: throw ParserError("expected token before $token", token.range)
     }
 }
