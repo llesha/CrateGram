@@ -41,6 +41,6 @@ fun Rules.removeQuantifier(quantifier: Suffix): Token {
             GeneratedToken(ruleName.symbol, "{...}")
         }
 
-        else -> throw InterpreterError("Unexpected token $quantifier")
+        else -> throw InterpreterError("unexpected token $quantifier")
     }
 }

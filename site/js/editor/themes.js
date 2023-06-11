@@ -14,28 +14,37 @@ var dracula = {
         foreground: "e69749"
     },
     {
-        "foreground": "6272a4",
-        "token": "comment",
-        "fontStyle": 'italic'
+        foreground: "6272a4",
+        token: "comment",
+        fontStyle: 'italic'
     },
     {
-        "token": "string",
-        "foreground": "f1fa8c",
+        token: "string",
+        foreground: "f1fa8c",
     },
     {
-        "token": "apos",
-        "foreground": "f1fa8c",
+        token: 'string.escape',
+        foreground: 'a2a2a2'
     },
     {
-        "token": "keyword",
-        "foreground": "cfcfc2",
+        token: "apos",
+        foreground: "f1fa8c",
+    },
+    {
+        token: "keyword",
+        foreground: "cfcfc2",
         fontStyle: "bold"
     },
     {
         token: "invalid",
         foreground: "ff0303",
         background: "ff79c6",
-    }, {
+    },
+    {
+        token: 'string.escape.invalid',
+        foreground: 'ff0303'
+    },
+    {
         token: "operator",
         foreground: "3896d4",
     },
@@ -80,7 +89,12 @@ var light = {
     }, {
         token: 'string',
         foreground: '067d17'
-    }, {
+    },
+    {
+        token: 'string.escape',
+        foreground: '525252'
+    },
+    {
         token: 'apos',
         foreground: '067d17'
     },
@@ -103,6 +117,10 @@ var light = {
     {
         token: "bracket",
         foreground: "c8511e"
+    },
+    {
+        token: 'string.escape.invalid',
+        foreground: 'ff0303'
     },
     {
         token: "invalid",

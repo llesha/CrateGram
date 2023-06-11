@@ -1,14 +1,14 @@
 import * as themes from "./themes.js";
 import { config, hoverHints, tokensProvider, editorOptions, defaultGrammar } from "./editorConstants.js";
-import { updateFontSize, updateAstView } from "../loader.js"
+import { updateFontSize, updateAstView, setDotExceptions } from "../loader.js"
 import { addPlaceholdersWithOnInput } from "./placeholder.js";
 import { addHotkeys } from "./hotkeys.js";
 
-window.myGrammar = new window.Interpreter.result.Pipeline()
-
 function init() {
+    window.myGrammar = new window.Interpreter.result.Pipeline()
     require(['vs/editor/editor.main'], function () {
         monaco.languages.register({ id: "PEG" });
+        monaco.languages.register({ id: "Inputs" });
         monaco.languages.setLanguageConfiguration("PEG", config);
         monaco.languages.setMonarchTokensProvider("PEG", tokensProvider);
 
@@ -24,12 +24,15 @@ function init() {
         });
 
         window.textEditor = monaco.editor.create(document.getElementById("text-editor"), {
-            ...editorOptions
+            ...editorOptions,
+            language: "Inputs"
         });
 
         window.ast = monaco.editor.create(document.getElementById("ast"), {
             ...editorOptions,
-            folding: true
+            folding: true,
+            glyphMargin: false,
+            lineDecorationsWidth: 0,
         });
 
         var didScrollChangeDisposable = window.ast.onDidScrollChange(function () {
@@ -45,10 +48,10 @@ function init() {
 
         updateFontSize()
 
+        setDotExceptions(localStorage.getItem("dotExceptions") ?? "\n\r")
+
         monaco.languages.registerHoverProvider("PEG", {
             provideHover: function (model, position) {
-                // let tokens = model.getLineTokens(position.lineNumber);
-                // let currentTokenInfo = tokens._tokens[2 * tokens.findTokenIndexAtOffset(position.column) + 1];
                 let index = model.getOffsetAt(position);
                 let text = window.editor.getValue()
                 let value = text.substring(index, index + 1)
@@ -72,11 +75,16 @@ function init() {
                      put between two characters<br>
                      inside the <strong>Character Class</strong>`
                 }
-                if (cont == null && value.match(/[^\w\s\[\]()?*+]/)) {
-                    cont = `<strong>Invalid</strong> - this token will not <br>
-                    be tokenized, remove it`
-                }
-                if (cont != null)
+                // if (cont == null && value.match(/[^#"'\w\s\[\](){}?*+]/)) {
+                //     let tokens = window.editor.getLineTokens(position.lineNumber);
+                //     console.log(tokens)
+                //     let currentTokenInfo = tokens._tokens[2 * tokens.findTokenIndexAtOffset(position.column) + 1];
+                //     console.log(currentTokenInfo)
+                //     cont = `<strong>Invalid</strong> - this token will not <br>
+                //     be tokenized, remove it`
+                //     var array = new Uint32Array(window.editor.getModel().tokenization.grammarTokens._tokens._lineTokens[0])
+                // }
+                if (cont != null && (index == 0 || text[index - 1] != "\\")) {
                     return {
                         range: new monaco.Range(position.lineNumber, position.column,
                             position.lineNumber, position.column),
@@ -86,10 +94,11 @@ function init() {
                             value: value == "-" ? getRangeArgs() : cont
                         }],
                     };
+                }
             },
         });
 
-        monaco.languages.registerCompletionItemProvider('PEG', {
+        let completionItemProvider = {
             provideCompletionItems: function (_model, _position) {
                 const suggestions = [
                     {
@@ -101,7 +110,10 @@ function init() {
                 ];
                 return { suggestions: suggestions };
             }
-        });
+        }
+
+        monaco.languages.registerCompletionItemProvider('PEG', completionItemProvider);
+        monaco.languages.registerCompletionItemProvider('Inputs', completionItemProvider);
 
         addHotkeys()
     })

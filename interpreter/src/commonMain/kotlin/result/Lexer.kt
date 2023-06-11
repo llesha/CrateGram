@@ -2,6 +2,7 @@ package result
 
 import LexerError
 import ifNotNull
+import listRange
 import token.*
 
 /**
@@ -38,9 +39,12 @@ class Lexer(private val text: String) {
             res.last().add(tokenizeNext() ?: break)
             if (res.last().last().symbol == "=") {
                 val equalSign = res.last().removeLast()
-                val prev = res.last().removeLastOrNull() ?: throw LexerError("Expected token before =", equalSign.range)
+                val prev = res.last().removeLastOrNull() ?: throw LexerError("expected token before =", equalSign.range)
                 res.add(mutableListOf(prev, equalSign))
             }
+        }
+        if(res[0].isNotEmpty()) {
+            throw LexerError("Extra elements", res[0].listRange())
         }
         res.removeAt(0)
         return res
@@ -50,7 +54,7 @@ class Lexer(private val text: String) {
         skipWhitespace()
         if (index >= text.length)
             return null
-        val startIndex = index + 1
+        val startIndex = index
 
         tokenizeSequence(startIndex).ifNotNull { return this }
 
@@ -60,9 +64,9 @@ class Lexer(private val text: String) {
             '<' -> if (index + 1 < text.length && text[index + 1] == '-') {
                 index++
                 TempToken("=", index - 1..index++)
-            } else throw LexerError("Untokenized input ${text[index]}", position = index)
+            } else throw LexerError("untokenized input ${text[index]}", position = index)
 
-            else -> throw LexerError("Untokenized input ${text[index]}", position = index)
+            else -> throw LexerError("untokenized input ${text[index]}", position = index)
         }
     }
 
@@ -98,7 +102,7 @@ class Lexer(private val text: String) {
             }
             index++
         }
-        throw LexerError("Out of bounds while tokenizing $condition", startIndex..index)
+        throw LexerError("out of bounds while tokenizing $condition", startIndex..index)
     }
 
     private fun getTextWhileMatches(regex: Regex): String {
@@ -124,7 +128,7 @@ class Lexer(private val text: String) {
             while (index < text.length - 1 && (text[index] != '*' || text[index + 1] != ')'))
                 index++
             if (index == text.lastIndex || (text[index] != '*' && text[index + 1] != ')'))
-                throw LexerError("Unclosed multiline comment", startIndex..startIndex + 1)
+                throw LexerError("unclosed multiline comment", startIndex..startIndex + 1)
             index += 2
             skipWhitespace()
         }
@@ -138,14 +142,14 @@ class Lexer(private val text: String) {
 
     private fun getByIndex(): Char {
         if (index >= text.length)
-            throw LexerError("Out of bounds while lexing a token", position = index)
+            throw LexerError("out of bounds while lexing a token", position = index)
         return text[index]
     }
 
     private fun nextChar(): Char {
         index++
         if (index >= text.length)
-            throw LexerError("Unexpected end of text", position = index)
+            throw LexerError("unexpected end of text", position = index)
         return text[index]
     }
 

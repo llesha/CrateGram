@@ -45,7 +45,7 @@ class Group(children: MutableList<Token>, position: IntRange = -1..-1) :
     companion object {
         fun fromList(list: List<Token>): Token {
             if (list.isEmpty())
-                throw ParserError("Zero size list")
+                throw ParserError("zero size list")
             if (list.size == 1)
                 return list.first()
             if (list.size == 2)

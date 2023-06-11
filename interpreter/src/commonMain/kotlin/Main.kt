@@ -17,6 +17,12 @@ fun setGrammar(text: String): Pipeline {
 
 @OptIn(ExperimentalJsExport::class)
 @JsExport
+fun clearGrammar(): Pipeline {
+    return pipeline.clearGrammar()
+}
+
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 fun parse(text: String): Array<Any> {
     return pipeline.parse(text)
 }

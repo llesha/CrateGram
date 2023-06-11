@@ -17,13 +17,6 @@ class LexerTest {
     }
 
     @Test
-    fun testCharacterClass() {
-        val text = "a = [AB\\t\\n \\\\]"
-        val tokens = Lexer(text).tokenize()
-        println(tokens)
-    }
-
-    @Test
     fun testOneRule() {
         val lexer = Lexer(
             """

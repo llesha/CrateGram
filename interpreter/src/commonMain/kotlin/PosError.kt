@@ -1,5 +1,7 @@
+import kotlin.js.JsExport
 import kotlin.js.JsName
 
+@JsExport
 abstract class PosError(
     @JsName("msg") val msg: String,
     @JsName("range") val range: IntRange?,

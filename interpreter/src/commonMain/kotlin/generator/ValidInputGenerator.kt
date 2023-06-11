@@ -6,7 +6,7 @@ import token.*
 class ValidInputGenerator(val rules: Map<IdentToken, Rule>) {
     fun generateToken(token: Token): String {
         when (token) {
-            is Literal -> return token.symbol
+            is Literal -> return token.withoutEscapes
             is CharacterClass -> return token.getRandomVariant()
             is IdentToken -> return generateToken(rules[token] ?: throw Exception("Token $token not found in rules"))
             is Or -> return generateToken(token.children.random(random))

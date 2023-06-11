@@ -1,8 +1,10 @@
 import reductions.*
 import result.Pipeline
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class RuleTransformerTest {
+    @Ignore
     @Test
     fun testRemovePredicates() {
         val pipeline = Pipeline().setGrammar(

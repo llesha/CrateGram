@@ -6,7 +6,7 @@
     <title>CrateGram</title>
     <!-- <script src="https://kit.fontawesome.com/fcd79d1b18.js" crossorigin="anonymous"></script> -->
 
-    <link rel="stylesheet" href="css/constants.css">
+    <link rel="stylesheet" href="css/colors.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/interactive.css">
 
@@ -18,7 +18,7 @@
 
 <body data-theme="light" style="background-color: var(--bg-color);">
     <div id="main">
-        <div class="left panel">
+        <div class="left panel no-scroll">
             <div>
                 <svg class="hoverable clickable" id="menu-button" xmlns="http://www.w3.org/2000/svg" height="2em"
                     viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
@@ -46,30 +46,29 @@
                         </svg>
 
                         <span class="unselectable descr clickable hoverable expandable"
-                            descr="CP-logic is a set of tasks taken from
+                            descr="Caterpillar-Logic is a set of tasks taken from
                          a brilliant game <a href=https://play.google.com/store/apps/details?id=org.gromozeka1980.caterpillar_logic&hl=en&gl=US>Caterpillar logic</a>"
-                            id="cp-tasks">CP-logic</span>
+                            id="cp-tasks">Caterpillar logic</span>
                         <div class="task-list" style="display:none">
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-1</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-2</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-3</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-4</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-5</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-6</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-7</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-8</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-9</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-10</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-11</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-12</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-13</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-14</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-15</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-16</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-17</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-18</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-19</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CP-20</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-2</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-3</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-4</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-5</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-6</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-7</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-8</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-9</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-10</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-11</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-12</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-13</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-14</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-15</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-16</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-17</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-18</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-19</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">CL-20</span></div>
                         </div>
                     </div>
                 </div>
@@ -116,7 +115,8 @@
         <div class="right panel">
             <div>
                 <span class="" id="current-task">Playground</span>
-                <span class="error"></span>
+                <span id="error-test-text" class="error"></span>
+                <span id="solved-text" class="complete descr" descr="" style="display: none; cursor: default;">Solved</span>
             </div>
             <div></div>
             <div class="main-grid">
@@ -125,8 +125,7 @@
                     <div class="status-line">
                         <span id="grammar-error" style="float: left" class="error"></span>
                         <span id="grammar-type" class="unselectable hoverable clickable"
-                            style="float:right; display: none;">task
-                            grammar</span>
+                            style="float:right; display: none;">my grammar</span>
                         <!-- <label style="float:right" class="switch">
                         <input id="grammar-toggle" type="checkbox">
                         <span class="slider round"></span>

@@ -43,7 +43,7 @@ const config = {
     //     ["[", "]"],
     //     ["(", ")"],
     // ],
-};
+}
 
 const tokenizer = {
     root: [
@@ -65,6 +65,7 @@ const tokenizer = {
             include: "@whitespace",
         },
         [/#.*/, "comment"],
+        [/{\d+}/, "operator"],
 
         // delimiters and operators
         [/[{}()]/, "@brackets"],
@@ -151,8 +152,8 @@ const tokenizer = {
     ],
 
     characterClass: [
-        // [/[^\\\[]+/, "characterClass"],
-        // [/@escapes/, "string.escape"],
+        [/[^\\\[]+/, "bracket"],
+        [/@escapes/, "string.escape"],
         // [/\\./, "string.escape.invalid"],
         [
             /\]/,
@@ -168,6 +169,28 @@ const tokenizer = {
         [/[ \t\r\n]+/, "white"],
         [/\(\*/, "comment", "@comment"]
     ]
+}
+
+const tokensProvider = {
+    keywords: [
+        "root",
+    ],
+    operators: [
+        "=", "<-",
+
+        "!", "&",
+
+        "*", "+", "?",
+        "-", ".", // regex
+
+        "|", "/",
+    ],
+    // we include these common regular expressions
+    symbols: /[=><!?:&|+\-*\/%]+/,
+    // C# style strings
+    escapes:
+        /\\(?:[abfnrtv\\"']|x[\dA-Fa-f]{1,4}|u[\dA-Fa-f]{4}|U[\dA-Fa-f]{8})/,
+    tokenizer: tokenizer
 }
 
 const groupHint = `<strong>Group</strong> - groups tokens into one`
@@ -206,29 +229,6 @@ const hoverHints = {
     range between <br>`
 }
 
-const tokensProvider = {
-    keywords: [
-        "root",
-    ],
-    operators: [
-        "=", "<-",
-
-        "!", "&",
-
-        "*", "+", "?",
-        "-", ".", // regex
-
-        "|", "/",
-    ],
-    // we include these common regular expressions
-    symbols: /[=><!?:&|+\-*\/%]+/,
-    // C# style strings
-    escapes:
-        /\\(?:[abfnrtv\\"']|x[\dA-Fa-f]{1,4}|u[\dA-Fa-f]{4}|U[\dA-Fa-f]{8})/,
-    tokenizer: tokenizer
-}
-
-
 const editorOptions = {
     value: ``,
     glyphMargin: true,
@@ -242,8 +242,7 @@ const editorOptions = {
     },
     folding: false,
     lineNumbers: "off",
-    lineDecorationsWidth: 0,
-    lineNumbersMinChars: 0,
+    lineDecorationsWidth: 20,
     bracketColorizationOptions: { enabled: false }
 }
 

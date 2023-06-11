@@ -97,12 +97,12 @@ class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
             }
 
             is Literal -> return withAstValue(text, index) {
-                if (token.symbol == "")
+                if (token.withoutEscapes == "")
                     return@withAstValue true to index
-                if (token.symbol.length + index - 1 >= text.length)
+                if (token.withoutEscapes.length + index - 1 >= text.length)
                     return@withAstValue false to index
-                if (text.substring(index, index + token.symbol.length) == token.symbol)
-                    return@withAstValue true to index + token.symbol.length
+                if (text.substring(index, index + token.withoutEscapes.length) == token.withoutEscapes)
+                    return@withAstValue true to index + token.withoutEscapes.length
                 return@withAstValue false to index
             }
 

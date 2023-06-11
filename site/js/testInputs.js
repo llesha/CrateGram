@@ -10,6 +10,7 @@ export function clearValid() {
     grids[0].innerHTML = saved.outerHTML
     grids[0].getElementsByClassName("grid-cell")[0].onclick = clearValid
     asts = {}
+    taskValid.clear()
 }
 
 export function clearInvalid() {
@@ -18,31 +19,31 @@ export function clearInvalid() {
     grids[1].innerHTML = saved.outerHTML
     grids[1].getElementsByClassName("grid-cell")[0].onclick = clearInvalid
     invalid.clear()
+    taskInvalid.clear()
 }
 
-export function addValueToTable(isMyGrammarValid, index, value) {
+export function addValueToTable(isMyGrammarValid, isTaskGrammarValid, index, value) {
     let grammarType = document.getElementById("grammar-type")
 
     if (grammarType.textContent == "my grammar") {
         if (asts[value] != null || invalid.has(value))
             return
-        _addToTable(isMyGrammarValid, "M", value)
+        _addToTable(isMyGrammarValid, "M ", value)
     }
-    let taskGrammarStatus = window.Interpreter.parse(value)
     if (grammarType.textContent == "both grammars") {
         findAndRemoveCellByValue(value)
-        if (taskGrammarStatus[0] == isMyGrammarValid)
-            _addToTable(isMyGrammarValid, "B", value)
+        if (isTaskGrammarValid == isMyGrammarValid)
+            _addToTable(isMyGrammarValid, "TM", value)
         else {
-            _addToTable()
+            _addToTable(isTaskGrammarValid, "T ", value)
+            _addToTable(isMyGrammarValid, "M ", value)
         }
     }
     else if (grammarType.textContent == "task grammar") {
         if (taskValid.has(value) || taskInvalid.has(value))
             return
-        _addToTable(taskGrammarStatus, "T", value)
+        _addToTable(isTaskGrammarValid, "T ", value)
     }
-
 }
 
 /**
@@ -55,23 +56,26 @@ function _addToTable(isValid, type, value) {
     let grids = document.getElementsByClassName("status-grid")
     let newCell = document.createElement("div")
     newCell.classList.add("grid-cell")
-    newCell.innerHTML = `<i class="hidden fa-solid fa-xmark to-left"></i>
+    newCell.innerHTML = `<svg class="hidden" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 384 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
     <!--<i class="hidden fa-regular fa-clipboard to-left2"></i> -->
-    <span style="margin-left: 0.3em">&nbsp</span>
+    <span style="margin-left: 0.3em; white-space: pre">  </span>
     <p class="grid-cell-content" style="display:inline">${value}</p>`
     if (isValid) {
         newCell.classList.add("grid-left")
         grids[0].appendChild(newCell)
+        newCell = grids[0].lastElementChild
     } else {
         newCell.classList.add("grid-right")
         grids[1].appendChild(newCell)
+        newCell = grids[1].lastElementChild
     }
-    if (type == "T" || type == "B") {
-        if (isValid) taskValid.add(value)
-        else
+    if (type == "T " || type == "TM") {
+        if (isValid) { taskValid.add(value) }
+        else {
             taskInvalid.add(value)
-        taskAsts[value] = newCell.getElementsByTagName("span")[0].textContent = type
-    } else if (type == "B" || type != "T") {
+        }
+    }
+    if (type == "TM" || type != "T ") {
         if (isValid) {
             let astNode = window.myGrammar.getAst()
             asts[value] = JSON.stringify(JSON.parse(astNode.toJson()), null, 2)
@@ -87,7 +91,8 @@ function _addToTable(isValid, type, value) {
             invalid.add(value)
         }
     }
-    newCell.getElementsByTagName("i")[0].onclick = () => { removeCell(newCell) }
+    newCell.getElementsByTagName("span")[0].textContent = type
+    newCell.getElementsByTagName("svg")[0].onclick = () => { removeCell(newCell) }
     //newCell.getElementsByTagName("i")[1].onclick = () => { copyText(newCell.getElementsByTagName("span")[0]) }
 
 }
@@ -106,11 +111,11 @@ function findAndRemoveCellByValue(text) {
 
 function removeCell(element) {
     let type = element.getElementsByTagName("span")[0]
-    if (type != "&nbsp") {
-        taskAsts.delete(element.getElementsByTagName("p")[0].textContent)
+    if (type != "  ") {
+        taskValid.delete(element.getElementsByTagName("p")[0].textContent)
         taskInvalid.delete(element.getElementsByTagName("p")[0].textContent)
     }
-    if (type != "T") {
+    if (type != "T ") {
         delete asts[element.getElementsByTagName("p")[0].textContent]
         invalid.delete(element.getElementsByTagName("p")[0].textContent)
     }
@@ -119,4 +124,88 @@ function removeCell(element) {
 
 function copyText(element) {
     navigator.clipboard.writeText(element.innerText);
+}
+
+export function moveCells() {
+    let grids = document.getElementsByClassName("status-grid")
+    _moveFromOneGrid(grids[0], (bool) => { return !bool }, (cell, value) => {
+        grids[1].appendChild(cell)
+        delete asts[value]
+        invalid.add(value)
+    })
+    _moveFromOneGrid(grids[1], (bool) => { return bool }, (cell, value) => {
+        grids[0].appendChild(cell)
+        taskValid.delete(value)
+        taskInvalid.add(value)
+    })
+    if (window.currentGrammar != "playground")
+        mergeCells(grids)
+}
+
+/**
+ * Only `myGrammar` texts can be moved
+ * @param {Element} grid of valid or invalid texts
+ * @param {boolean} shouldMove if current text should move to another grid
+ * @param {} move move function
+ */
+function _moveFromOneGrid(grid, shouldMove, move) {
+    let gridChildren = _filterGridChildren(grid)
+    for (const cell of gridChildren) {
+        let type = cell.getElementsByTagName("span")[0].textContent
+        let value = cell.getElementsByTagName("p")[0].textContent
+        if (type == "TM") {
+            let myStatus = window.myGrammar.hasGrammar() ? window.myGrammar.parse(value) : [false, 0]
+
+            if (shouldMove(myStatus[0]))
+                _moveCopy(cell, myStatus)
+        } else if (type == "M ") {
+            let myStatus = window.myGrammar.hasGrammar() ? window.myGrammar.parse(value) : [false, 0]
+            if (shouldMove(myStatus[0]))
+                move(cell, value)
+        }
+    }
+}
+
+function _moveCopy(prevValid, myStatus) {
+    let copy = prevValid.cloneNode(true)
+    let stayedAndCopied = shouldMove(myStatus[0]) ? ["T ", "M "] : ["M ", "T "]
+    prevValid.getElementsByTagName("span")[0].textContent = stayedAndCopied[0]
+    copy.getElementsByTagName("span")[0].textContent = stayedAndCopied[1]
+    move(copy, value)
+}
+
+function mergeCells(grids) {
+    _mergeGrid(grids[0])
+    _mergeGrid(grids[1])
+}
+
+function _mergeGrid(grid) {
+    let taskValues = {}
+    let myGrammarValues = {}
+    let gridChildren = _filterGridChildren(grid)
+    for (const cell of gridChildren) {
+        let type = cell.getElementsByTagName("span")[0].textContent
+        let value = cell.getElementsByTagName("p")[0].textContent
+        if (type == "T ") {
+            if (myGrammarValues[value] != null) {
+                grid.removeChild(myGrammarValues[value])
+                cell.getElementsByTagName("span")[0].textContent = "TM"
+            }
+            else
+                taskValues[value] = cell
+        }
+        else if (type == "M ") {
+            if (taskValues[value]) {
+                grid.removeChild(taskValues[value])
+                cell.getElementsByTagName("span")[0].textContent = "TM"
+            }
+            else
+                myGrammarValues[value] = cell
+        }
+    }
+}
+
+function _filterGridChildren(grid) {
+    return Array.from(grid.getElementsByClassName("grid-cell"))
+        .filter(e => e.getElementsByTagName("span").length > 0)
 }

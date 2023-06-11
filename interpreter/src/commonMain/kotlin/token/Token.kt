@@ -66,16 +66,6 @@ abstract class Token(val symbol: String, var range: IntRange) {
 
 abstract class OneChildToken(symbol: String, range: IntRange, var child: Token) : Token(symbol, range)
 
-class Literal(symbol: String, range: IntRange = -1..-1) : Token(symbol, range) {
-    override fun getRepr(level: Int): String {
-        if (level == 0)
-            return "e"
-        return if (symbol == "") "ε" else "a"
-    }
-
-    override fun toString(): String = """"$symbol""""
-}
-
 /**
  * root - is a starting rule
  */

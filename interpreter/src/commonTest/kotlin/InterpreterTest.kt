@@ -57,7 +57,7 @@ class InterpreterTest {
     @Test
     fun testEmptyOr() {
         val exception = assertFails { Pipeline().setGrammar("root = [ABCDE]/") }
-        assertTrue((exception as PosError).msg.contains("Empty expression"))
+        assertTrue((exception as PosError).msg.contains("empty expression"))
     }
 
     @Test
@@ -154,5 +154,28 @@ class InterpreterTest {
         assertParse("Hello,A!", true)
 
         assertParse("Hello, A!", false)
+    }
+
+    @Test
+    fun testEscapedGrammar() {
+        setGrammar("""root = "\"2\"" | "\n\r\b\t\'\\" """)
+        assertParse(""""2"""", true)
+        assertParse("\n\r\b\t\'\\", true)
+
+        setGrammar("""root = [\]"]""")
+        assertParse("""]""", true)
+        assertParse(""""""", true)
+
+        setGrammar("""root =  [\]\'\"\-\b\n\t\r] """)
+        assertParse("]", true)
+        assertParse("'", true)
+        assertParse("\"", true)
+        assertParse("-", true)
+        assertParse("\b", true)
+        assertParse("\n", true)
+        assertParse("\t", true)
+        assertParse("\r", true)
+
+        assertParse("r", false)
     }
 }

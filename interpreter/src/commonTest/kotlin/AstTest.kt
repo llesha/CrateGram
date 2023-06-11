@@ -1,3 +1,4 @@
+import TestFactory.assertParse
 import result.Pipeline
 import kotlin.test.Test
 
@@ -21,5 +22,22 @@ class AstTest {
         pipeline.parse("Hello,    Alex!")
         val ast = pipeline.getAst()
         println(ast.toJson())
+    }
+
+    @Test
+    // TODO: bad ast
+    fun simpleAst() {
+        setGrammar(
+            """
+            root = a "1"? !.
+            a = "10"*"""
+        )
+        assertParse("", true)
+        assertParse("1", true)
+        assertParse("10", true)
+        assertParse("101", true)
+
+        assertParse("11", false)
+        assertParse("00", false)
     }
 }

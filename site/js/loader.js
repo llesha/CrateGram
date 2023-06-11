@@ -84,6 +84,4 @@ export function setDotExceptions(newExceptionsText) {
     localStorage.setItem("dotExceptions", newExceptionsText)
 }
 
-setDotExceptions(localStorage.getItem("dotExceptions") ?? "\n\r")
-
 export { setTheme, getTheme, updateFontSize, updateDebounce, getDebounce, updateAstView };

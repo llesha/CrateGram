@@ -4,23 +4,17 @@ import InterpreterError
 import ParserError
 import random
 
-class CharacterClass(symbol: String, position: IntRange = -1..-1) : Token(symbol, position) {
-    override fun toString(): String = "[$symbol]"
+class CharacterClass(symbol: String, position: IntRange = -1..-1) : EscapableToken(symbol, position) {
 
-    private val escapeMap: Map<Char, Char> = mutableMapOf(
-        // default escapes
-        't' to '\t',
-        'b' to '\b',
-        'n' to '\n',
-        'r' to '\r',
-//        "'" to '\'',
-        '\"' to '\"',
-        '\\' to '\\',
-        // PEG-specific escapes
-        '[' to ']',
-        ']' to ']',
-        '-' to '-',
-    )
+    override val escapeMap: Map<Char, Char> =
+        super.escapeMap + // Character class-specific escapes
+                mapOf(
+                    '[' to ']',
+                    ']' to ']',
+                    '-' to '-'
+                )
+
+    override fun toString(): String = "[$symbol]"
 
     private val chars: MutableSet<Char> = mutableSetOf()
     private val ranges = mutableListOf<CharRange>()
@@ -72,20 +66,10 @@ class CharacterClass(symbol: String, position: IntRange = -1..-1) : Token(symbol
         if (i >= symbol.length)
             throw InterpreterError("unexpected end of character class", range = range)
         return if (symbol[i] == '\\') {
-            convertEscaped(i + 1)
+            val (char, index) = convertEscaped(i + 1)
+            Triple(true, char, index)
         } else
             Triple(false, symbol[i], 1)
-    }
-
-    private fun convertEscaped(i: Int): Triple<Boolean, Char, Int> {
-        return if (symbol[i] == 'u') {
-            if (i + 4 >= symbol.length)
-                throw ParserError("")
-            val number = symbol.substring(i + 1, i + 5).toIntOrNull() ?: throw ParserError("")
-            Triple(true, Char(number), 4)
-        } else {
-            Triple(true, escapeMap[symbol[i]] ?: throw ParserError(""), 2)
-        }
     }
 
     fun getRandomVariant(): String {
