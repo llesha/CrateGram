@@ -172,11 +172,13 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .menu-down {
+    margin-left: 2px;
     transform: rotate(90deg);
     transition: .2s;
 }
 
 .menu-right {
+    margin-left: 2px;
     transition: .2s;
 }
 

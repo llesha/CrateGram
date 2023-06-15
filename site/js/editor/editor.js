@@ -48,7 +48,7 @@ function init() {
 
         updateFontSize()
 
-        setDotExceptions(localStorage.getItem("dotExceptions") ?? "\n\r")
+        setDotExceptions(localStorage.getItem("dotExceptions") ?? "\\n")
 
         monaco.languages.registerHoverProvider("PEG", {
             provideHover: function (model, position) {

@@ -1,0 +1,6 @@
+# has exaclty two islands of length two
+root = not2* l2 not2* l2 not2* !.
+not2 = lb / l1
+l2 = "11" / "22" / "33" / "44"
+l1 = "1" !"1" / "2" !"2" / "3" !"3" / "4" !"4"
+lb = "11" "1"+ / "22" "2"+ / "33" "3"+ / "44" "4"+

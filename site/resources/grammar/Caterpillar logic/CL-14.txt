@@ -1,0 +1,4 @@
+# has island of length two and does not have islands of length more than two
+root = l1* l2 (l1 / l2)* !.
+l2 = "11" !"1" / "22" !"2" / "33" !"3" / "44" !"4"
+l1 = "1" !"1" / "2" !"2" / "3" !"3" / "4" !"4"

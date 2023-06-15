@@ -1,0 +1,3 @@
+root = pa* !.
+pa = "(" pa* ")" | "[" pa* "]" | "{" pa* "}" | "<" pa* ">" | singular
+singular = "{}" | "<>" | "[]" | "()"

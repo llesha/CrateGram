@@ -1,0 +1,5 @@
+# does not have red (1) segment next to black (3)
+root = (o !t | no13 | t !o)* !.
+o = "1"
+t = "3"
+no13 = [24]

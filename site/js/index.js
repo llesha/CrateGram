@@ -39,11 +39,11 @@ themeButton.onclick = () => {
 let expandables = document.getElementsByClassName("expandable")
 let currentTask = document.getElementById("current-task")
 
-for (const e of expandables) {
+for (let e of expandables) {
     e.onclick = () => {
         let classList = Array.from(e.previousElementSibling.classList)
         let index = classList.indexOf("menu-down")
-        let next = e.nextElementSibling
+        let next = e.parentElement.nextElementSibling
         if (index == -1) {
             classList.splice(classList.indexOf("menu-right"), 1)
             classList.push("menu-down")
@@ -55,48 +55,53 @@ for (const e of expandables) {
         }
         e.previousElementSibling.classList = classList.join(" ")
     }
-    let children = e.parentElement.getElementsByClassName("task-list")[0].children
-    for (const child of children) {
-        if (localStorage.getItem(child.textContent + "-solved") != null) {
-            child.classList.add("complete")
+    let children = e.parentElement.nextElementSibling.children
+    if (e.textContent != "Grammar tasks")
+        for (let child of children) {
+            if (localStorage.getItem(child.textContent + "-solved") != null) {
+                child.classList.add("complete")
+            }
+            child.onclick = () => _setTask(e, child)
         }
-        child.onclick = () => {
-            fetch(`../resources/grammar/${e.textContent}/${child.textContent}.txt`)
-                .then(f => f.text())
-                .then(text => {
-                    
-                    window.firstTime = true
-                    utils.clearValid()
-                    utils.clearInvalid()
-                    document.getElementById("grammar-type").textContent = "task grammar"
-                    console.log(text)
-                    window.Interpreter.setGrammar(text)
-                    currentTask.innerText = "Check " + child.textContent
-                    currentTask.classList.add("hoverable")
-                    currentTask.classList.add("clickable")
-                    document.getElementById("grammar-type").style.display = "block"
-                    window.currentGrammar = child.textContent
-                    window.currentGrammarBlock = e.textContent
-                    window.editor.setValue(localStorage.getItem(window.currentGrammar) ?? " ")
-                    if (localStorage.getItem(child.textContent + "-solved") != null) {
-                        _addSolvedSpan()
-                    }
-                    else {
-                        document.getElementById("solved-text").style.display = "none"
-                    }
+}
 
-                    loadGrammar()
-                    if (window.currentGrammar != "playground" && window.firstTime) {
-                        delete window.firstTime
-                        if (window.myGrammar.hasGrammar())
-                            document.getElementById("grammar-type").textContent = "both grammars"
-                        else
-                            document.getElementById("grammar-type").textContent = "task grammar"
-                        addGrammarExamples()
-                    }
-                })
-        }
-    }
+function _setTask(e, child) {
+    console.log(e.textContent, `${child.textContent.trim()}.txt`)
+    fetch(`../resources/grammar/${e.textContent}/${child.textContent.trim()}.txt`)
+        .then(f => f.text())
+        .then(text => {
+
+            window.firstTime = true
+            utils.clearValid()
+            utils.clearInvalid()
+            document.getElementById("grammar-type").textContent = "task grammar"
+            console.log(text)
+            window.Interpreter.setGrammar(text)
+            currentTask.innerText = "Check " + child.textContent.trim()
+            currentTask.classList.add("hoverable")
+            currentTask.classList.add("clickable")
+            document.getElementById("grammar-type").style.display = "block"
+            window.currentGrammar = child.textContent.trim()
+            window.currentGrammarBlock = e.textContent
+            window.editor.setValue(localStorage.getItem(window.currentGrammar) ?? " ")
+            if (localStorage.getItem(child.textContent.trim() + "-solved") != null) {
+                _addSolvedSpan()
+            }
+            else {
+                document.getElementById("solved-text").style.display = "none"
+            }
+
+            loadGrammar()
+            if (window.currentGrammar != "playground" && window.firstTime) {
+                delete window.firstTime
+                if (window.myGrammar.hasGrammar())
+                    document.getElementById("grammar-type").textContent = "both grammars"
+                else
+                    document.getElementById("grammar-type").textContent = "task grammar"
+                addGrammarExamples()
+            }
+        })
+
 }
 
 function processGrammarTests(f) {
