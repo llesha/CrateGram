@@ -76,7 +76,7 @@ function setCompleteTasks() {
 setCompleteTasks()
 
 function _setTask(e, child) {
-    fetch(`..${_getSite}/resources/grammar/${e.textContent}/${child.textContent.trim()}.txt`)
+    fetch(`..${_getSite()}/resources/grammar/${e.textContent}/${child.textContent.trim()}.txt`)
         .then(f => f.text())
         .then(text => {
             window.firstTime = true
