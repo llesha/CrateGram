@@ -76,7 +76,7 @@ function setCompleteTasks() {
 setCompleteTasks()
 
 function _setTask(e, child) {
-    fetch(`../resources/grammar/${e.textContent}/${child.textContent.trim()}.txt`)
+    fetch(`..${_getSite()}/resources/grammar/${e.textContent}/${child.textContent.trim()}.txt`)
         .then(f => f.text())
         .then(text => {
             window.firstTime = true
@@ -113,11 +113,15 @@ function _setTask(e, child) {
 }
 
 function processGrammarTests(f) {
-    fetch(`../resources/test/${window.currentGrammarBlock}/${window.currentGrammar}-test.txt`)
+    fetch(`..${_getSite()}/resources/test/${window.currentGrammarBlock}/${window.currentGrammar}-test.txt`)
         .then(f => f.text())
         .then(text => {
             f(text)
         })
+}
+
+function _getSite() {
+    return localStorage.getItem("isLocalhost") == "true" ? "" : "/CrateGram"
 }
 
 export function addGrammarExamples() {
