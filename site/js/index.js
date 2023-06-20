@@ -1,5 +1,5 @@
 import { loadGrammar } from "./editor/placeholder.js";
-import { setTheme, updateFontSize, updateDebounce, updateAstView, setDotExceptions } from "./loader.js";
+import { setTheme, updateFontSize, updateDebounce, updateAstView, setDotExceptions, unlock } from "./loader.js";
 import * as utils from "./testInputs.js"
 
 const BLOCK_DELIMITER = "█████████████████████████████\n"
@@ -39,64 +39,77 @@ themeButton.onclick = () => {
 let expandables = document.getElementsByClassName("expandable")
 let currentTask = document.getElementById("current-task")
 
-for (const e of expandables) {
-    e.onclick = () => {
-        let classList = Array.from(e.previousElementSibling.classList)
-        let index = classList.indexOf("menu-down")
-        let next = e.nextElementSibling
-        if (index == -1) {
-            classList.splice(classList.indexOf("menu-right"), 1)
-            classList.push("menu-down")
-            next.style.display = "block"
-        } else {
-            classList.splice(index, 1)
-            classList.push("menu-right")
-            next.style.display = "none"
+for (let e of expandables) {
+    // check that corresponding svg is not `lock`
+    if (e.previousElementSibling.getAttribute("viewBox") != "0 0 448 512")
+        e.onclick = () => {
+            let classList = Array.from(e.previousElementSibling.classList)
+            let index = classList.indexOf("menu-down")
+            let next = e.parentElement.nextElementSibling
+            if (index == -1) {
+                classList.splice(classList.indexOf("menu-right"), 1)
+                classList.push("menu-down")
+                next.style.display = "block"
+            } else {
+                classList.splice(index, 1)
+                classList.push("menu-right")
+                next.style.display = "none"
+            }
+            e.previousElementSibling.classList = classList.join(" ")
         }
-        e.previousElementSibling.classList = classList.join(" ")
-    }
-    let children = e.parentElement.getElementsByClassName("task-list")[0].children
-    for (const child of children) {
-        if (localStorage.getItem(child.textContent + "-solved") != null) {
-            child.classList.add("complete")
-        }
-        child.onclick = () => {
-            fetch(`../resources/grammar/${e.textContent}/${child.textContent}.txt`)
-                .then(f => f.text())
-                .then(text => {
-                    
-                    window.firstTime = true
-                    utils.clearValid()
-                    utils.clearInvalid()
-                    document.getElementById("grammar-type").textContent = "task grammar"
-                    console.log(text)
-                    window.Interpreter.setGrammar(text)
-                    currentTask.innerText = "Check " + child.textContent
-                    currentTask.classList.add("hoverable")
-                    currentTask.classList.add("clickable")
-                    document.getElementById("grammar-type").style.display = "block"
-                    window.currentGrammar = child.textContent
-                    window.currentGrammarBlock = e.textContent
-                    window.editor.setValue(localStorage.getItem(window.currentGrammar) ?? " ")
-                    if (localStorage.getItem(child.textContent + "-solved") != null) {
-                        _addSolvedSpan()
-                    }
-                    else {
-                        document.getElementById("solved-text").style.display = "none"
-                    }
 
-                    loadGrammar()
-                    if (window.currentGrammar != "playground" && window.firstTime) {
-                        delete window.firstTime
-                        if (window.myGrammar.hasGrammar())
-                            document.getElementById("grammar-type").textContent = "both grammars"
-                        else
-                            document.getElementById("grammar-type").textContent = "task grammar"
-                        addGrammarExamples()
-                    }
-                })
-        }
+}
+
+function setCompleteTasks() {
+    for (let e of expandables) {
+        let children = e.parentElement.nextElementSibling.children
+        if (e.textContent != "Grammar tasks")
+            for (let child of children) {
+                if (localStorage.getItem(child.textContent.trim() + "-solved") != null) {
+                    child.classList.add("complete")
+                }
+                child.onclick = () => _setTask(e, child)
+            }
     }
+}
+
+setCompleteTasks()
+
+function _setTask(e, child) {
+    fetch(`../resources/grammar/${e.textContent}/${child.textContent.trim()}.txt`)
+        .then(f => f.text())
+        .then(text => {
+            window.firstTime = true
+            utils.clearValid()
+            utils.clearInvalid()
+            document.getElementById("grammar-type").textContent = "task grammar"
+            // console.log(text)
+            window.Interpreter.setGrammar(text)
+            currentTask.innerText = "Check " + child.textContent.trim()
+            currentTask.classList.add("hoverable")
+            currentTask.classList.add("clickable")
+            document.getElementById("grammar-type").style.display = "block"
+            window.currentGrammar = child.textContent.trim()
+            window.currentGrammarBlock = e.textContent
+            window.editor.setValue(localStorage.getItem(window.currentGrammar) ?? " ")
+            if (localStorage.getItem(child.textContent.trim() + "-solved") != null) {
+                _addSolvedSpan()
+            }
+            else {
+                document.getElementById("solved-text").style.display = "none"
+            }
+
+            loadGrammar()
+            if (window.currentGrammar != "playground" && window.firstTime) {
+                delete window.firstTime
+                if (window.myGrammar.hasGrammar())
+                    document.getElementById("grammar-type").textContent = "both grammars"
+                else
+                    document.getElementById("grammar-type").textContent = "task grammar"
+                addGrammarExamples()
+            }
+        })
+
 }
 
 function processGrammarTests(f) {
@@ -187,12 +200,12 @@ document.getElementById("playground").onclick = () => {
     window.editor.setValue(localStorage.getItem("playground"))
     currentTask.innerText = "Playground"
     currentTask.classList = []
+    document.getElementById("error-test-text").display.style = "none"
     document.getElementById("grammar-type").style.display = "none"
     document.getElementById("grammar-type").textContent = "my grammar"
     window.currentGrammar = "playground"
     utils.clearValid()
     utils.clearInvalid()
-
 }
 
 let dotExceptionsInput = document.getElementById("dot-exceptions-input")
@@ -236,7 +249,36 @@ currentTask.onclick = () => {
         localStorage.setItem(window.currentGrammar + "-solved", window.editor.getValue())
         document.getElementById("error-test-text").textContent = ""
         _addSolvedSpan()
+        setCompleteTasks()
+        unlock()
     })
+}
+
+document.getElementById("help").onclick = () => hideOrShowHelp()
+document.getElementById("help-text").getElementsByTagName("button")[0].onclick = () => hideOrShowHelp()
+
+function hideOrShowHelp() {
+    let popup = document.getElementById("help-text")
+    popup.classList = _addOrRemove(popup.classList, "hidden").toString().replaceAll(",", " ")
+}
+
+let helpGrammars = document.getElementsByClassName("grammar-display")
+for (const grammar of helpGrammars) {
+    grammar.onclick = (event) => {
+        let lines = grammar.textContent.split("\n")
+        lines = lines.map(line => line.trim())
+        lines.splice(0, 1)
+        navigator.clipboard.writeText(lines.join("\n")
+            .replaceAll(new RegExp(String.fromCharCode(160), "g"), " "))
+
+        let notification = document.getElementById("copy-notification")
+        notification.style.left = (event.pageX + 10) + "px"
+        notification.style.top = (event.pageY) + "px"
+        notification.style.display = "block"
+        setTimeout(() => {
+            notification.style.display = "none"
+        }, 1000)
+    }
 }
 //#endregion
 
@@ -245,3 +287,9 @@ function _addSolvedSpan() {
     solved.style.display = "inherit"
     solved.setAttribute("descr", localStorage.getItem(window.currentGrammar + "-solved"))
 }
+
+// setTimeout(function() {
+//     console.log(window.editor)
+//     const html = window.editor.viewModel.getHTMLToCopy([editor.getModel().getFullModelRange()], false);
+//     console.log(html);
+// }, 10000);

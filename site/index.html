@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/interactive.css">
 
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&display=swap" rel="stylesheet"> -->
     <script type="module" src="js/interpreter/Interpreter.js"></script>
     <script type="text/javascript" src="monaco-editor/min/vs/loader.js"></script>
     <link rel="icon" type="image/svg+xml" href="resources/crategram-ico.svg">
@@ -31,31 +31,66 @@
                     <span id="playground" class="clickable hoverable">Playground</span>
                 </div>
                 <div class="menu-element">
-                    <svg class="menu-right" xmlns="http://www.w3.org/2000/svg" height="1em"
-                        viewBox="0 0 320 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
-                        <path fill="var(--main-color)"
-                            d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
-                    </svg>
-                    <span class="unselectable clickable hoverable expandable" id="tasks-button">Grammar tasks</span>
-                    <div id="grammar-tasks">
-                        <div class="indent"><span class="clickable hoverable">Random</span></div>
+                    <div>
                         <svg class="menu-right" xmlns="http://www.w3.org/2000/svg" height="1em"
                             viewBox="0 0 320 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
                             <path fill="var(--main-color)"
                                 d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
                         </svg>
 
-                        <span class="unselectable descr clickable hoverable expandable"
-                            descr="Caterpillar-Logic is a set of tasks taken from
-                         a brilliant game <a href=https://play.google.com/store/apps/details?id=org.gromozeka1980.caterpillar_logic&hl=en&gl=US>Caterpillar logic</a>"
-                            id="cp-tasks">Caterpillar logic</span>
+                        <span class="unselectable clickable hoverable expandable" id="tasks-button">Grammar tasks</span>
+                    </div>
+                    <div id="grammar-tasks">
+                        <div class="indent">
+                            <svg class="menu-right" xmlns="http://www.w3.org/2000/svg" height="1em"
+                                viewBox="0 0 320 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                <path fill="var(--main-color)"
+                                    d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+                            </svg>
+                            <span class="unselectable descr clickable hoverable expandable" descr="Start with these tasks
+                            
+                            <strong>Dictionary: 01</strong>" id="binary-tasks">Binary</span>
+                        </div>
+                        <div class="task-list" style="display:none">
+                            <div class="indent2"><span class="unselectable clickable hoverable">B-1</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">B-2</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">B-3</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">B-4</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable">B-5</span></div>
+                        </div>
+                        <div class="indent">
+                            <svg class="menu-right" xmlns="http://www.w3.org/2000/svg" height="1em"
+                                viewBox="0 0 320 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                <path fill="var(--main-color)"
+                                    d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+                            </svg>
+                            <span class="unselectable clickable hoverable expandable">Other</span>
+                        </div>
+                        <div class="task-list" style="display:none">
+                            <div class="indent2"><span class="unselectable clickable hoverable descr"
+                                    descr="<strong>Dictionary: ()</strong>">parentheses</span></div>
+                            <div class="indent2"><span class="unselectable clickable hoverable descr"
+                                    descr="<strong>Dictionary: ()[]{}<></strong>">parentheses-2</span>
+                            </div>
+                        </div>
+                        <div class="indent">
+                            <svg id="cater-tasks" class="menu-right" xmlns="http://www.w3.org/2000/svg" height="1em"
+                                viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                <path fill="var(--main-color)"
+                                    d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z" />
+                            </svg>
+
+                            <span class="unselectable descr clickable hoverable expandable" descr="Set of tasks taken from
+                         a brilliant game <a href=https://play.google.com/store/apps/details?id=org.gromozeka1980.caterpillar_logic&hl=en&gl=US>Caterpillar logic</a>.
+                         This project is heavily inspired by it.
+                         
+                         <strong>Dictionary: 1234</strong>">Caterpillar logic</span>
+                        </div>
                         <div class="task-list" style="display:none">
                             <div class="indent2"><span class="unselectable clickable hoverable">CL-2</span></div>
                             <div class="indent2"><span class="unselectable clickable hoverable">CL-3</span></div>
                             <div class="indent2"><span class="unselectable clickable hoverable">CL-4</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CL-5</span></div>
                             <div class="indent2"><span class="unselectable clickable hoverable">CL-6</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CL-7</span></div>
                             <div class="indent2"><span class="unselectable clickable hoverable">CL-8</span></div>
                             <div class="indent2"><span class="unselectable clickable hoverable">CL-9</span></div>
                             <div class="indent2"><span class="unselectable clickable hoverable">CL-10</span></div>
@@ -63,16 +98,10 @@
                             <div class="indent2"><span class="unselectable clickable hoverable">CL-12</span></div>
                             <div class="indent2"><span class="unselectable clickable hoverable">CL-13</span></div>
                             <div class="indent2"><span class="unselectable clickable hoverable">CL-14</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CL-15</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CL-16</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CL-17</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CL-18</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CL-19</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable">CL-20</span></div>
                         </div>
                     </div>
                 </div>
-                <div class="unselectable settings-input menu-element unselectable outline-top">
+                <div class="hidden unselectable settings-input menu-element unselectable outline-top">
                     <p class="descr search-name" descr="Which characters are not recognized by `.`. 
                     Not needed For tasks">Dot exceptions:</p>
                     <div style="cursor: text; display: inline;">
@@ -102,21 +131,29 @@
                         <span class="slider round" style="margin-top: 3.5px; margin-bottom: -3.5px"></span>
                     </label>
                 </div>
-                <h2 style="border-top: var(--gray) solid 1px; padding-top: 0.5em" id="help">Help</h2>
-                <p>This is currently a <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG</a> parser
-                    playground (but soon it&#39;ll be more than that).</p>
-                <h2 id="how-to-use">How to use</h2>
-                <p style="border-bottom: var(--gray) solid 1px; padding-bottom: 0.5em">First editor is to define a
-                    grammar, second is to check validity of an input. You can hover
-                    on operators in the grammar editor to see their meaning.</p>
-                <a href="https://github.com/llesha/CrateGram">github</a>
+                <div style="padding-bottom: 0.5em; border-top: var(--gray) solid 1px; padding-top: 0.5em">
+                    <div id="help" class="clickable hoverable">
+                        <span style="text-decoration: underline; color: var(--middle-color);">Help</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="0.7em"
+                            viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                            <path fill="var(--middle-color)"
+                                d="M432 48H208c-17.7 0-32 14.3-32 32V96H128V80c0-44.2 35.8-80 80-80H432c44.2 0 80 35.8 80 80V304c0 44.2-35.8 80-80 80H416V336h16c17.7 0 32-14.3 32-32V80c0-17.7-14.3-32-32-32zM48 448c0 8.8 7.2 16 16 16H320c8.8 0 16-7.2 16-16V256H48V448zM64 128H320c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z" />
+                        </svg>
+                    </div>
+                </div>
+                <div id="help" class="hoverable"
+                    style="border-radius: 0.5em; padding: 0.2em; padding-top: 0.1em; padding-bottom: 0.1em;">
+                    <a href="https://github.com/llesha/CrateGram">github</a>
+                </div>
+
             </div>
         </div>
         <div class="right panel">
             <div>
                 <span class="" id="current-task">Playground</span>
                 <span id="error-test-text" class="error"></span>
-                <span id="solved-text" class="complete descr" descr="" style="display: none; cursor: default;">Solved</span>
+                <span id="solved-text" class="complete descr" descr=""
+                    style="display: none; cursor: default;">Solved</span>
             </div>
             <div></div>
             <div class="main-grid">
@@ -168,6 +205,91 @@
     <script type="module" src="js/loader.js"></script>
     <script type="module" src="js/index.js"></script>
     <script type="module" src="js/editor/editor.js"></script>
+    <div id="help-text" class="hidden">
+        <button>x</button>
+        <p>A parse utility for <a href="https://pdos.csail.mit.edu/~baford/packrat/popl04/peg-popl04.pdf">PEG
+                parsers</a>, which includes:</p>
+        <ol>
+            <li>Grammar tasks</li>
+            <li>PEG Playground</li>
+            <li>Abstract syntax tree of input text</li>
+        </ol>
+        <h2 id="grammar-tasks">Grammar tasks</h2>
+        <p>Grammar tasks are inspired by the <a
+                href="https://play.google.com/store/apps/details?id=org.gromozeka1980.caterpillar_logic&hl=en&gl=US">Caterpillar
+                logic</a> game. </p>
+        <p>In each task, a user has to construct a grammar that would be similar to a task grammar (which is hidden) by
+            testing different inputs. For each input the program says whether it is valid for the task grammar or not.
+            To make it easier, each task already has 5 valid and invalid inputs. </p>
+        <h3 id="example">Example</h3>
+        <p>Suppose we are given a task, and we know that following inputs are valid:</p>
+        <pre style="background-color: var(--light-gray); border-radius: 0.5em;"><code>        01010101
+        101
+        11100001
+        110101011
+        00110</code></pre>
+
+        <p>And following are invalid:</p>
+        <pre style="background-color: var(--light-gray); border-radius: 0.5em;"><code>        0
+        1
+        1111
+        00
+        0000</code></pre>
+        <p>We can assume that input is valid if it contains both 1 and 0.
+            Let&#39;s create a grammar and test it:</p>
+        <div class="grammar-display">
+            <div style="top:0px;height:22px;" class="view-line"><span><span class="mtk1 mtkb">root</span><span
+                        class="mtk1">&nbsp;</span><span class="operator">=</span><span
+                        class="mtk1">&nbsp;(zeroStart&nbsp;</span><span class="operator">/</span><span
+                        class="mtk1">&nbsp;oneStart)&nbsp;</span><span class="operator">!</span><span
+                        class="mtk1">.</span></span></div>
+            <div style="top:22px;height:22px;" class="view-line"><span><span class="mtk1">zeroStart&nbsp;</span><span
+                        class="operator">=</span><span class="mtk1">&nbsp;</span><span class="string">"0"</span><span
+                        class="mtk7">+</span><span class="mtk1">&nbsp;</span><span class="string">"1"</span><span
+                        class="operator">+</span><span class="mtk1">&nbsp;any</span></span></div>
+            <div style="top:44px;height:22px;" class="view-line"><span><span class="mtk1">oneStart&nbsp;</span><span
+                        class="operator">=</span><span class="mtk1">&nbsp;</span><span class="string">"1"</span><span
+                        class="operator">+</span><span class="mtk1">&nbsp;</span><span class="string">"0"</span><span
+                        class="operator">+</span><span class="mtk1">&nbsp;any</span></span></div>
+            <div style="top:66px;height:22px;" class="view-line"><span><span class="mtk1">any&nbsp;</span><span
+                        class="operator">=</span><span class="mtk1">&nbsp;</span><span class="bracket">[01]</span><span
+                        class="operator">*</span></span></div>
+        </div>
+        <p>We get: <code class="error">WA: 101</code>.
+            It is wrong because we need even number of ones. Therefore, this grammar should work:</p>
+
+        <div class="grammar-display" data-mprt="7">
+            <div style="top:0px;height:22px;" class="view-line"><span><span class="mtk1 mtkb">root</span><span
+                        class="mtk1">&nbsp;</span><span class="operator">=</span><span
+                        class="mtk1">&nbsp;(zeroFirst&nbsp;</span><span class="operator">/</span><span
+                        class="mtk1">&nbsp;zeroMiddle&nbsp;</span><span class="operator">/</span><span
+                        class="mtk1">&nbsp;zeroLast)&nbsp;</span><span class="operator">!</span><span
+                        class="mtk1">.</span></span></div>
+            <div style="top:22px;height:22px;" class="view-line"><span><span class="mtk1">ones&nbsp;</span><span
+                        class="operator">=</span><span class="mtk1">&nbsp;(</span><span class="string">"1"</span><span
+                        class="mtk1">&nbsp;</span><span class="string">"0"</span><span class="operator">*</span><span
+                        class="mtk1">&nbsp;</span><span class="string">"1"</span><span class="mtk1">)</span></span>
+            </div>
+            <div style="top:44px;height:22px;" class="view-line"><span><span class="mtk1">zeroFirst&nbsp;</span><span
+                        class="operator">=</span><span class="mtk1">&nbsp;</span><span class="string">"0"</span><span
+                        class="operator">+</span><span class="mtk1">&nbsp;ones&nbsp;ones</span><span
+                        class="operator">*</span><span class="mtk1">&nbsp;</span><span class="string">"0"</span><span
+                        class="operator">*</span></span></div>
+            <div style="top:66px;height:22px;" class="view-line"><span><span class="mtk1">zeroLast&nbsp;</span><span
+                        class="operator">=</span><span class="mtk1">&nbsp;</span><span class="string">"0"</span><span
+                        class="operator">*</span><span class="mtk1">&nbsp;ones&nbsp;ones</span><span
+                        class="operator">*</span><span class="mtk1">&nbsp;</span><span class="string">"0"</span><span
+                        class="operator">+</span></span></div>
+            <div style="top:88px;height:22px;" class="view-line"><span><span class="mtk1">zeroMiddle&nbsp;</span><span
+                        class="operator">=</span><span class="mtk1">&nbsp;</span><span class="string">"11"</span><span
+                        class="operator">*</span><span class="mtk1">&nbsp;(</span><span class="string">"1"</span><span
+                        class="mtk1">&nbsp;</span><span class="string">"0"</span><span class="operator">+</span><span
+                        class="mtk1">&nbsp;</span><span class="string">"1"</span><span class="mtk1">)</span><span
+                        class="operator">+</span><span class="mtk1">&nbsp;</span><span class="string">"11"</span><span
+                        class="operator">*</span></span></div>
+        </div>
+    </div>
+    <div id="copy-notification">Copied!</div>
 </body>
 
 </html>

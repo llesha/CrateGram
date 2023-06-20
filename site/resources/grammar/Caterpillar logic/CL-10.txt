@@ -1,0 +1,6 @@
+# each one-colored segment should be length of two or more
+root = (o / tw / t / f)* !.
+o = "1" "1"+
+tw = "2" "2"+
+t = "3" "3"+
+f = "4" "4"+

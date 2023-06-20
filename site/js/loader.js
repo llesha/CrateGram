@@ -82,6 +82,38 @@ export function setDotExceptions(newExceptionsText) {
     document.getElementById("dot-exceptions-input").value = newExceptionsText
     document.getElementById("dot-exceptions-input").style.width = newExceptionsText.length + "ch"
     localStorage.setItem("dotExceptions", newExceptionsText)
+    window.myGrammar.setDotExceptions(newExceptionsText)
 }
 
-export { setTheme, getTheme, updateFontSize, updateDebounce, getDebounce, updateAstView };
+const forUnlock = [
+    "B-1",
+    "B-2",
+    "B-3",
+    "B-4",
+    "B-5",
+    "parentheses",
+    "parentheses-2"
+]
+
+export function unlock() {
+    let solvedForUnlock = 0
+    for (const level of forUnlock) {
+        if (localStorage.getItem(level + "-solved") != null) {
+            solvedForUnlock += 1
+        }
+    }
+
+    let caterpillar = document.getElementById("cater-tasks")
+    if (solvedForUnlock >= 5) {
+        caterpillar.setAttribute("viewBox", "0 0 320 512")
+        caterpillar.getElementsByTagName("path")[0].setAttribute("d", "M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z")
+    }
+    else {
+        let clickable = caterpillar.nextElementSibling
+        clickable.setAttribute("descr", "<strong>Solve any 5 tasks from Binary and Other to unlock</strong>\n\n" + clickable.getAttribute("descr"))
+    }
+}
+
+unlock()
+
+export { setTheme, getTheme, updateFontSize, updateDebounce, getDebounce, updateAstView }

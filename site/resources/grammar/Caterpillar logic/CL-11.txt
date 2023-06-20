@@ -1,0 +1,2 @@
+# there should be exactly four islands of different color
+root = ("1"+ / "2"+ / "3"+ / "4"+){4} !.

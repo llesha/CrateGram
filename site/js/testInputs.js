@@ -1,6 +1,6 @@
 var invalid = new Set()
 var taskInvalid = new Set()
-var asts = {}
+var valid = new Set()
 var taskValid = new Set()
 var highlighted
 
@@ -9,7 +9,7 @@ export function clearValid() {
     let saved = grids[0].getElementsByClassName("grid-cell")[0]
     grids[0].innerHTML = saved.outerHTML
     grids[0].getElementsByClassName("grid-cell")[0].onclick = clearValid
-    asts = {}
+    valid.clear()
     taskValid.clear()
 }
 
@@ -23,14 +23,13 @@ export function clearInvalid() {
 }
 
 export function addValueToTable(isMyGrammarValid, isTaskGrammarValid, index, value) {
-    let grammarType = document.getElementById("grammar-type")
-
-    if (grammarType.textContent == "my grammar") {
-        if (asts[value] != null || invalid.has(value))
+    let grammarType = document.getElementById("grammar-type").textContent
+    if (grammarType == "my grammar") {
+        if (valid.has(value) || invalid.has(value))
             return
         _addToTable(isMyGrammarValid, "M ", value)
     }
-    if (grammarType.textContent == "both grammars") {
+    if (grammarType == "both grammars") {
         findAndRemoveCellByValue(value)
         if (isTaskGrammarValid == isMyGrammarValid)
             _addToTable(isMyGrammarValid, "TM", value)
@@ -39,7 +38,7 @@ export function addValueToTable(isMyGrammarValid, isTaskGrammarValid, index, val
             _addToTable(isMyGrammarValid, "M ", value)
         }
     }
-    else if (grammarType.textContent == "task grammar") {
+    else if (grammarType == "task grammar") {
         if (taskValid.has(value) || taskInvalid.has(value))
             return
         _addToTable(isTaskGrammarValid, "T ", value)
@@ -56,7 +55,9 @@ function _addToTable(isValid, type, value) {
     let grids = document.getElementsByClassName("status-grid")
     let newCell = document.createElement("div")
     newCell.classList.add("grid-cell")
-    newCell.innerHTML = `<svg class="hidden" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 384 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+    newCell.innerHTML = `<svg class="hidden" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 384 512">
+    <!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+    <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
     <!--<i class="hidden fa-regular fa-clipboard to-left2"></i> -->
     <span style="margin-left: 0.3em; white-space: pre">  </span>
     <p class="grid-cell-content" style="display:inline">${value}</p>`
@@ -76,25 +77,25 @@ function _addToTable(isValid, type, value) {
         }
     }
     if (type == "TM" || type != "T ") {
-        if (isValid) {
-            let astNode = window.myGrammar.getAst()
-            asts[value] = JSON.stringify(JSON.parse(astNode.toJson()), null, 2)
-            newCell.onmouseenter = () => {
-                window.ast.setValue(asts[value])
+        valid.add(value)
+        newCell.onmouseenter = () => {
+            let parsed = window.myGrammar.parse(value)
+            if (parsed[0]) {
+                let astNode = window.myGrammar.getAst()
+                window.ast.setValue(JSON.stringify(JSON.parse(astNode.toJson()), null, 2))
                 if (highlighted != null && highlighted != newCell) {
                     highlighted.classList.remove("highlighted")
                 }
                 highlighted = newCell
                 highlighted.classList.add("highlighted")
             }
-        } else {
-            invalid.add(value)
         }
+    } else {
+        invalid.add(value)
     }
     newCell.getElementsByTagName("span")[0].textContent = type
     newCell.getElementsByTagName("svg")[0].onclick = () => { removeCell(newCell) }
     //newCell.getElementsByTagName("i")[1].onclick = () => { copyText(newCell.getElementsByTagName("span")[0]) }
-
 }
 
 function findAndRemoveCellByValue(text) {
@@ -116,7 +117,7 @@ function removeCell(element) {
         taskInvalid.delete(element.getElementsByTagName("p")[0].textContent)
     }
     if (type != "T ") {
-        delete asts[element.getElementsByTagName("p")[0].textContent]
+        valid.delete(element.getElementsByTagName("p")[0].textContent)
         invalid.delete(element.getElementsByTagName("p")[0].textContent)
     }
     element.parentElement.removeChild(element)
@@ -130,7 +131,7 @@ export function moveCells() {
     let grids = document.getElementsByClassName("status-grid")
     _moveFromOneGrid(grids[0], (bool) => { return !bool }, (cell, value) => {
         grids[1].appendChild(cell)
-        delete asts[value]
+        valid.delete(value)
         invalid.add(value)
     })
     _moveFromOneGrid(grids[1], (bool) => { return bool }, (cell, value) => {

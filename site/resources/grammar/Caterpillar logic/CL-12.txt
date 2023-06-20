@@ -1,0 +1,3 @@
+# two bright green (2) islands
+root = no2* "2"+ no2+ "2"+ no2* !.
+no2 = [134]

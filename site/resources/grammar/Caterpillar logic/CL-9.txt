@@ -1,0 +1,4 @@
+# sum of red (1) and shady green (4) is 5
+root = (no14* s){5} no14* !.
+no14 = [23]
+s = [14]

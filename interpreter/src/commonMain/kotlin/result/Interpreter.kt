@@ -49,9 +49,11 @@ class Interpreter(val rules: MutableMap<IdentToken, Rule>) {
     private var currentParent = ast
 
     /**
+     * TODO: Currently not working
+     *
      * List of characters not recognized by [AnyToken]
      */
-    var dotExceptions = "\n\r"
+    var dotExceptions = ""
 
     fun parseInput(text: String): Pair<Boolean, Int> {
         ast.children.clear()

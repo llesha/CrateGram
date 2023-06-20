@@ -1,3 +1,15 @@
+@font-face {
+    font-family: 'Fira Code';
+    src: url(../resources/FiraCode-Bold.woff);
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: 'Fira Code';
+    src: url(../resources/FiraCode-Medium.woff);
+    font-weight: normal;
+}
+
 :root {
     font-family: 'Fira Code';
 }

@@ -1,0 +1,3 @@
+# correct parentheses sequence
+root = pa* !.
+pa = "(" pa* ")" | "()"
