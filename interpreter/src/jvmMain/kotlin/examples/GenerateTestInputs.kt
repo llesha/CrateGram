@@ -43,19 +43,25 @@ fun writeTestCases(alphabets: Map<String, String>, folder: String) {
         pipeline.setGrammar(grammarPath.toFile().readText())
         val grammarName = grammarPath.fileName.toString().removeSuffix(".txt")
         val testFile = testPath.resolve(folder)
-            .resolve("${grammarName}-test.txt")
+            .resolve("$grammarName-test.txt")
             .toFile()
         testFile.writeText("")
+        val essentialTests = testPath.resolve(folder).resolve(("$grammarName-test-essential.txt")).toFile()
+        val (essentialValid, essentialInvalid, essentialInvalidAlphabet) = if (essentialTests.exists())
+            essentialTests.readText().split(BLOCK_DELIMITER) else mutableListOf("", "", "")
 
         val (validInputs, invalidInputs, invalidWithInvalidSymbols) = createTestCases(
             alphabets[grammarName] ?: alphabets["*"]!!, pipeline
         )
+        testFile.appendText(essentialValid)
         validInputs.toList().sortedBy { it.length }.forEach { testFile.appendText("$it$VALUE_DELIMITER") }
         testFile.appendText(BLOCK_DELIMITER)
 
+        testFile.appendText(essentialInvalid)
         invalidInputs.toList().sortedBy { it.length }.forEach { testFile.appendText("$it$VALUE_DELIMITER") }
         testFile.appendText(BLOCK_DELIMITER)
 
+        testFile.appendText(essentialInvalidAlphabet)
         invalidWithInvalidSymbols.forEach { testFile.appendText("$it$VALUE_DELIMITER") }
     }
 }

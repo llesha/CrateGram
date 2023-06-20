@@ -1,7 +1,6 @@
 package token
 
 import ParserError
-import PosError
 
 abstract class EscapableToken(symbol: String, position: IntRange) : Token(symbol, position) {
     protected open val escapeMap: Map<Char, Char> = mapOf(
@@ -14,6 +13,22 @@ abstract class EscapableToken(symbol: String, position: IntRange) : Token(symbol
         '\"' to '\"',
         '\\' to '\\',
     )
+
+    protected fun convertEscaped():String {
+        val res = StringBuilder()
+        var i = 0
+        while(i < symbol.length) {
+            if(symbol[i] == '\\') {
+                val(char, newI) = convertEscaped(i + 1)
+                i += newI
+                res.append(char)
+            } else {
+                res.append(symbol[i])
+                i++
+            }
+        }
+        return res.toString()
+    }
 
     protected fun convertEscaped(i: Int): Pair<Char, Int> {
         return if (symbol[i] == 'u') {

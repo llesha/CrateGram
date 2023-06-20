@@ -16,14 +16,11 @@ html[data-theme="light"] {
     --indigo: #253092;
     --purple: #820d7c;
     --gray: #929292;
-    --light-gray: LightGray;
+    --light-gray: #d3d3d3;
     color: var(--main-color);
-    --ident-color: #820d7c;
-    --old-string-color: #c29580;
-    --string-color: #871094;
-    --old-number-color: #6a8759;
-    --number-color: #067d17;
+    --operator-color: #0033b3;
     --bracket-color: #c8511e;
+    --string-color: #067d17;
 }
 
 html[data-theme="dark"] {
@@ -43,12 +40,11 @@ html[data-theme="dark"] {
     --blue: #3896d4;
     --indigo: #253092;
     --purple: #820d7c;
-    --gray: #929292;
-    --light-gray: gray;
+    --gray: LightGray;
+    --light-gray: #5d5d5d;
     color: var(--main-color);
-    --ident-color: #cfcfc2;
     --string-color: #f1fa8c;
-    --number-color: #e69749;
+    --operator-color: #3896d4;
     --bracket-color: #b17215;
 }
 
@@ -66,4 +62,16 @@ a {
 
 .hoverable:hover {
     background-color: var(--light-gray);
+}
+
+.string {
+    color: var(--string-color)
+}
+
+.operator {
+    color: var(--operator-color)
+}
+
+.bracket {
+    color: var(--bracket-color)
 }

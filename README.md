@@ -34,12 +34,12 @@ defined after `=` or `<-`[^1] symbol in the rule.
 | `(* ... *)`              | -          | Multiline comment                                                                                      | 
 
 ## Grammar tasks 
-Grammar tasks are inspired by the [Caterpillar logic]() game. 
+Grammar tasks are inspired by the [Caterpillar logic](https://play.google.com/store/apps/details?id=org.gromozeka1980.caterpillar_logic&hl=en&gl=US) game. 
 
 In each task, a user has to construct a grammar that would be similar to a task grammar (which is hidden) by testing different inputs. For each input the program says whether it is valid for the task grammar or not. To make it easier, each task already has 5 valid and invalid inputs. 
 
 ### Example
-Suppose we are given a task and we know that following inputs are valid:
+Suppose we are given a task, and we know that following inputs are valid:
 ```
 01010101
 101
@@ -61,17 +61,17 @@ We can assume that input is valid if it contains both 1 and 0.
 Let's create a grammar and test it:
 
 ```
-root = zeroStart / oneStart
+root = (zeroStart / oneStart) !.
 zeroStart = "0"+ "1"+ any
 oneStart = "1"+ "0"+ any
 any = [01]*
 ```
 
-We get: WA: 101
+We get: `WA: 101`
 It is wrong because we need even number of ones. Therefore, this grammar should work:
-
+    
 ```
-root = zeroFirst / zeroMiddle / zeroLast
+root = (zeroFirst / zeroMiddle / zeroLast) !.
 ones = ("1" "0"* "1")
 zeroFirst = "0"+ ones ones* "0"*
 zeroLast = "0"* ones ones* "0"+

@@ -3,6 +3,7 @@ package result
 import InterpreterError
 import reductions.transformRules
 import token.IdentToken
+import token.Literal
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 import kotlin.js.JsName
@@ -49,6 +50,6 @@ class Pipeline {
 
     @JsName("setDotExceptions")
     fun setDotExceptions(newExceptions: String) {
-        interpreter.dotExceptions = newExceptions
+        interpreter.dotExceptions = Literal(newExceptions).withoutEscapes
     }
 }

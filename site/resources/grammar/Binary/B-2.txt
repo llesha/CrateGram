@@ -1,2 +1,5 @@
-# sum is 5
-root = ("0"* "1"){5} "0"* !.
+root = (zeroFirst / zeroMiddle / zeroLast) !.
+ones = ("1" "0"* "1")
+zeroFirst = "0"+ ones ones* "0"*
+zeroLast = "0"* ones ones* "0"+
+zeroMiddle = "11"* ("1" "0"+ "1")+ "11"*
