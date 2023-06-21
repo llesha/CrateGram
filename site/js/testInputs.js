@@ -158,7 +158,7 @@ function _moveFromOneGrid(grid, shouldMove, move) {
             let myStatus = window.myGrammar.hasGrammar() ? window.myGrammar.parse(value) : [false, 0]
 
             if (shouldMove(myStatus[0]))
-                _moveCopy(cell, myStatus, shouldMove, move)
+                _moveCopy(cell, myStatus, shouldMove, move, value)
         } else if (type == "M ") {
             let myStatus = window.myGrammar.hasGrammar() ? window.myGrammar.parse(value) : [false, 0]
             if (shouldMove(myStatus[0]))
@@ -167,7 +167,7 @@ function _moveFromOneGrid(grid, shouldMove, move) {
     }
 }
 
-function _moveCopy(prevValid, myStatus, shouldMove, move) {
+function _moveCopy(prevValid, myStatus, shouldMove, move, value) {
     let copy = prevValid.cloneNode(true)
     let stayedAndCopied = shouldMove(myStatus[0]) ? ["T ", "M "] : ["M ", "T "]
     prevValid.getElementsByTagName("span")[0].textContent = stayedAndCopied[0]
