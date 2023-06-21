@@ -204,7 +204,7 @@ document.getElementById("playground").onclick = () => {
     window.editor.setValue(localStorage.getItem("playground"))
     currentTask.innerText = "Playground"
     currentTask.classList = []
-    document.getElementById("error-test-text").display.style = "none"
+    document.getElementById("error-test-text").style.display = "none"
     document.getElementById("grammar-type").style.display = "none"
     document.getElementById("grammar-type").textContent = "my grammar"
     window.currentGrammar = "playground"
