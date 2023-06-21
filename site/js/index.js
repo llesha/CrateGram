@@ -1,4 +1,4 @@
-import { loadGrammar } from "./editor/placeholder.js";
+import { addTest, loadGrammar } from "./editor/placeholder.js";
 import { setTheme, updateFontSize, updateDebounce, updateAstView, setDotExceptions, unlock } from "./loader.js";
 import * as utils from "./testInputs.js"
 
@@ -284,6 +284,9 @@ for (const grammar of helpGrammars) {
         }, 1000)
     }
 }
+
+document.getElementById("add-input").onclick = () => addTest()
+
 //#endregion
 
 function _addSolvedSpan() {
