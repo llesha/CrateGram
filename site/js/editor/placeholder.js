@@ -158,10 +158,14 @@ export function addPlaceholdersWithOnInput() {
     });
 
     window.textEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, function () {
-        if (currentTextInputStatus != null &&
-            (!myGrammarHasError || document.getElementById("grammar-type") == "task grammar"))
-            addValueToTable(currentTextInputStatus?.[0], taskInputStatus?.[0], currentTextInputStatus?.[1], currentTextInput)
+        addTest()
     })
+}
+
+export function addTest() {
+    if (currentTextInputStatus != null &&
+        (!myGrammarHasError || document.getElementById("grammar-type") == "task grammar"))
+        addValueToTable(currentTextInputStatus?.[0], taskInputStatus?.[0], currentTextInputStatus?.[1], currentTextInput)
 }
 
 export function loadGrammar() {
@@ -177,8 +181,9 @@ export function loadGrammar() {
         window.myGrammar.clearGrammar()
         myGrammarHasError = true
         // console.log(error)
-        if (error.msg == null)
+        if (error.msg == null) {
             errorElement.innerText = `Unexpected error: ${error}`
+        }
         else {
             errorElement.innerText = error.msg
             showMarkers(error.msg,
@@ -187,6 +192,10 @@ export function loadGrammar() {
                     second: window.Interpreter.getEnding(error.range)
                 },
                 window.editor)
+        }
+        errorElement.setAttribute("descr", errorElement.innerText)
+        if(errorElement.innerText.length > 38) {
+            errorElement.innerText = errorElement.innerText.substring(0, 38) + "..."
         }
         if (document.getElementById("grammar-type") != "task grammar")
             window.textEditor.updateOptions({
