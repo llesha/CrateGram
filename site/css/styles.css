@@ -203,8 +203,10 @@ body {
     padding-top: 0.5em;
     padding-left: 0.5em;
     padding-right: 0.5em;
-    height: 3em;
+    height: 2em;
     margin: 0px;
+    display: grid;
+    grid-template-columns: 90px auto 140px;
 }
 
 .to-left {

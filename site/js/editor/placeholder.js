@@ -194,7 +194,9 @@ export function loadGrammar() {
                 window.editor)
         }
         errorElement.setAttribute("descr", errorElement.innerText)
-        if(errorElement.innerText.length > 38) {
+        // errorElement.previousElementSibling.style.display = "inline"
+        // errorElement.nextElementSibling.style.display = "inline"
+        if (errorElement.innerText.length > 38) {
             errorElement.innerText = errorElement.innerText.substring(0, 38) + "..."
         }
         if (document.getElementById("grammar-type") != "task grammar")
@@ -204,6 +206,8 @@ export function loadGrammar() {
     } finally {
         if (!myGrammarHasError) {
             errorElement.innerText = ""
+            // errorElement.previousElementSibling.style.display = "none"
+            // errorElement.nextElementSibling.style.display = "none"
             window.textEditor.updateOptions({
                 readOnly: false,
             });
