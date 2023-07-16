@@ -67,9 +67,32 @@
                             <span class="unselectable clickable hoverable expandable">Other</span>
                         </div>
                         <div class="task-list" style="display:none">
-                            <div class="indent2"><span class="unselectable clickable hoverable descr"
-                                    descr="<strong>Dictionary: ()</strong>">parentheses</span></div>
-                            <div class="indent2"><span class="unselectable clickable hoverable descr"
+                            <div class="indent2">
+                                <span class="unselectable clickable hoverable descr"
+                                    descr="<strong>Dictionary: 0123456789</strong>">sequence</span>
+                            </div>
+                            <div class="indent2">
+                                <svg class="locked-task" id="unlock-sequence" xmlns="http://www.w3.org/2000/svg"
+                                    height="1em"
+                                    viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                    <path fill="var(--main-color)"
+                                        d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z" />
+                                </svg>
+                                <span class="unselectable clickable hoverable descr"
+                                    descr="<strong>Dictionary: 0123456789</strong>">sequence-2</span>
+                            </div>
+                            <div class="indent2">
+                                <span class="unselectable clickable hoverable descr"
+                                    descr="<strong>Dictionary: ()</strong>">parentheses</span>
+                            </div>
+                            <div class="indent2">
+                                <svg class="locked-task" id="unlock-parentheses" xmlns="http://www.w3.org/2000/svg"
+                                    height="1em"
+                                    viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                    <path fill="var(--main-color)"
+                                        d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z" />
+                                </svg>
+                                <span class="unselectable clickable hoverable descr"
                                     descr="<strong>Dictionary: ()[]{}<></strong>">parentheses-2</span>
                             </div>
                         </div>
@@ -160,10 +183,11 @@
                 <div>
                     <div id="editor"></div>
                     <div class="status-line">
-                        <span id="add-input" style="align-self: center;" class="unselectable hoverable clickable">add test</span>
+                        <span id="add-input" style="align-self: center;" class="unselectable hoverable clickable">add
+                            test</span>
                         <!-- <span style="float: left; padding-top: 0.1em;">|</span> -->
-                        <!-- TODO: make status line a grid, make error text dynamic cell-->
-                        <span id="grammar-error" style="white-space: pre-wrap; align-self: center;" descr="" class="error descr"></span>
+                        <span id="grammar-error" style="white-space: pre-wrap; align-self: center;" descr=""
+                            class="error descr"></span>
                         <!-- <span style="float: left; padding-top: 0.1em;">|</span> -->
                         <span id="grammar-type" class="unselectable hoverable clickable"
                             style="display: none; align-self: center;">my grammar</span>

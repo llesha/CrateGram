@@ -16,7 +16,12 @@ val testPath: Path = grammarPath.toAbsolutePath().parent.resolve("test")
 val alphabets: Map<String, Any> = mapOf(
     "Binary" to "01",
     "Caterpillar logic" to "1234",
-    "Other" to mapOf("parentheses" to "()", "parentheses-2" to "()[]<>{}")
+    "Other" to mapOf(
+        "parentheses" to "()",
+        "parentheses-2" to "()[]<>{}",
+        "sequence" to "0123456789",
+        "sequence-2" to "0123456789"
+    )
 )
 
 /**
