@@ -95,6 +95,24 @@ const forUnlock = [
     "parentheses-2"
 ]
 
+var dependentUnlocks = {
+    "parentheses": "parentheses-2",
+    "sequence": "sequence-2"
+}
+
+export function unlockDependent() {
+    //console.log(Object.keys())
+    for (const key of Object.keys(dependentUnlocks)) {
+        var lock = document.getElementById("unlock-" + key)
+        console.log(lock, key)
+        if (localStorage.getItem(key + "-solved") != null && lock != null) {
+            lock.remove()
+        } else if (lock != null && !lock.nextElementSibling.getAttribute("descr").includes("Solve")) {
+            lock.nextElementSibling.setAttribute("descr", `Solve <strong>${key}</strong> first\n\n`+lock.nextElementSibling.getAttribute("descr"))
+        }
+    }
+}
+
 export function unlock() {
     let solvedForUnlock = 0
     for (const level of forUnlock) {
@@ -110,10 +128,12 @@ export function unlock() {
     }
     else {
         let clickable = caterpillar.nextElementSibling
-        clickable.setAttribute("descr", "<strong>Solve any 5 tasks from Binary and Other to unlock</strong>\n\n" + clickable.getAttribute("descr"))
+        if (!clickable.getAttribute("descr").includes("Solve any 5 tasks from Binary"))
+            clickable.setAttribute("descr", "<strong>Solve any 5 tasks from Binary and Other to unlock</strong>\n\n" + clickable.getAttribute("descr"))
     }
 }
 
 unlock()
+unlockDependent()
 
 export { setTheme, getTheme, updateFontSize, updateDebounce, getDebounce, updateAstView }

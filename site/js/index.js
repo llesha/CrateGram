@@ -1,9 +1,10 @@
 import { addTest, loadGrammar } from "./editor/placeholder.js";
-import { setTheme, updateFontSize, updateDebounce, updateAstView, setDotExceptions, unlock } from "./loader.js";
+import { setTheme, updateFontSize, updateDebounce, updateAstView, setDotExceptions, unlock, unlockDependent } from "./loader.js";
 import * as utils from "./testInputs.js"
 
 const BLOCK_DELIMITER = "█████████████████████████████\n"
 const VALUE_DELIMITER = "░\n"
+const ANTI_CHEAT = "3"
 
 //#region click listeners
 document.getElementById("menu-button").onclick = () => {
@@ -68,7 +69,11 @@ function setCompleteTasks() {
                 if (localStorage.getItem(child.textContent.trim() + "-solved") != null) {
                     child.classList.add("complete")
                 }
-                child.onclick = () => _setTask(e, child)
+                child.onclick = () => {
+                    console.log()
+                    if (child.getElementsByTagName("svg").length == 0)
+                        _setTask(e, child)
+                }
             }
     }
 }
@@ -236,10 +241,14 @@ currentTask.onclick = () => {
         invalidWithInvalidDictionary.pop()
 
         invalid.concat(invalidWithInvalidDictionary)
+        let iter = 0;
         for (const validText of valid) {
             let result = window.myGrammar.parse(validText)[0]
             if (!result) {
-                document.getElementById("error-test-text").textContent = `WA: '${validText}'`
+                if (iter + ANTI_CHEAT >= valid.length) {
+                    document.getElementById("error-test-text").textContent = `WA on one of hidden ${ANTI_CHEAT} tests`
+                } else
+                    document.getElementById("error-test-text").textContent = `WA: '${validText}'`
                 return
             }
         }
@@ -255,6 +264,7 @@ currentTask.onclick = () => {
         _addSolvedSpan()
         setCompleteTasks()
         unlock()
+        unlockDependent()
     })
 }
 

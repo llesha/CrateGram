@@ -1,0 +1,12 @@
+root = zero !.
+zero = "0"  (one / e)
+one = "1" (two / e)
+two = "2"  (three / e)
+three = "3" (four / e)
+four = "4" (five / e)
+five = "5" (six / e)
+six = "6" (seven / e)
+seven = "7" (eight / e)
+eight = "8" (nine / e)
+nine = "9" (zero / e)
+e = ""
