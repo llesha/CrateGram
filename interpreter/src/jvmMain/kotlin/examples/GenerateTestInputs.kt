@@ -44,7 +44,6 @@ fun writeTestCases(alphabets: Map<String, String>, folder: String) {
     val grammars = grammarPath.resolve(folder).listDirectoryEntries()
     val pipeline = Pipeline()
     for (grammarPath in grammars) {
-        println(grammarPath)
         pipeline.setGrammar(grammarPath.toFile().readText())
         val grammarName = grammarPath.fileName.toString().removeSuffix(".txt")
         val testFile = testPath.resolve(folder)
@@ -52,6 +51,8 @@ fun writeTestCases(alphabets: Map<String, String>, folder: String) {
             .toFile()
         testFile.writeText("")
         val essentialTests = testPath.resolve(folder).resolve(("$grammarName-test-essential.txt")).toFile()
+        if(essentialTests.exists())
+            println(essentialTests)
         val (essentialValid, essentialInvalid, essentialInvalidAlphabet) = if (essentialTests.exists())
             essentialTests.readText().split(BLOCK_DELIMITER) else mutableListOf("", "", "")
 
