@@ -182,10 +182,10 @@ export function loadGrammar() {
         myGrammarHasError = true
         // console.log(error)
         if (error.msg == null) {
-            errorElement.innerText = `Unexpected error: ${error}`
+            errorElement.innerHTML = `Unexpected error: ${error}`
         }
         else {
-            errorElement.innerText = error.msg.replace(/`([^`]*)`/g,"<code>$1</code>")
+            errorElement.innerHTML = error.msg.replace(/`([^`]*)`/g,"<code>$1</code>")
             showMarkers(error.msg,
                 error.position ?? {
                     first: window.Interpreter.getStarting(error.range),
@@ -193,11 +193,11 @@ export function loadGrammar() {
                 },
                 window.editor)
         }
-        errorElement.setAttribute("descr", errorElement.innerText)
+        errorElement.setAttribute("descr", errorElement.innerHTML)
         // errorElement.previousElementSibling.style.display = "inline"
         // errorElement.nextElementSibling.style.display = "inline"
         if (errorElement.innerText.length > 38) {
-            errorElement.innerText = errorElement.innerText.substring(0, 38) + "..."
+            errorElement.innerHTML = errorElement.innerHTML.substring(0, 38) + "..."
         }
         if (document.getElementById("grammar-type") != "task grammar")
             window.textEditor.updateOptions({
