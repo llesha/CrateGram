@@ -70,7 +70,6 @@ function setCompleteTasks() {
                     child.classList.add("complete")
                 }
                 child.onclick = () => {
-                    console.log()
                     if (child.getElementsByTagName("svg").length == 0)
                         _setTask(e, child)
                 }

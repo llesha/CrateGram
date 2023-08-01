@@ -39,7 +39,7 @@ class Parser(private val rules: List<List<Token>>) {
 
     private fun makeRuleChecks(rule: List<Token>) {
         if (rule.size < 3)
-            throw ParserError("expected at least three tokens for rule: ident, =, expression", rule.listRange())
+            throw ParserError("expected at least three tokens for rule: `ident`, `=`, `expression`", rule.listRange())
         if (rule[1].symbol != "=")
             throw ParserError("expected = as second token, got ${rule[1]}", rule[1].range)
         if (rule.first() !is IdentToken)

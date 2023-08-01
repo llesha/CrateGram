@@ -6,8 +6,5 @@
 ./gradlew jsBrowserDistribution
 
 compiled=$(<..\\site\\js\\interpreter\\Interpreter.js)
-
-# very bad way to replace `module.exports` to `window` at the end of the file
-# TODO: make this symbol independent
-echo ${compiled::-73}"window.Interpreter=r})();
-//# sourceMappingURL=Interpreter.js.map" > ..\\site\\js\\interpreter\\Interpreter.js
+# replace `module.exports` to `window` at the end of the file
+echo $compiled | sed 's/module.exports.Interpreter=/window.Interpreter=/' > ..\\site\\js\\interpreter\\Interpreter.js

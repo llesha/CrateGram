@@ -92,7 +92,9 @@ const forUnlock = [
     "B-4",
     "B-5",
     "parentheses",
-    "parentheses-2"
+    "parentheses-2",
+    "sequence",
+    "sequence-2"
 ]
 
 var dependentUnlocks = {
@@ -104,7 +106,6 @@ export function unlockDependent() {
     //console.log(Object.keys())
     for (const key of Object.keys(dependentUnlocks)) {
         var lock = document.getElementById("unlock-" + key)
-        console.log(lock, key)
         if (localStorage.getItem(key + "-solved") != null && lock != null) {
             lock.remove()
         } else if (lock != null && !lock.nextElementSibling.getAttribute("descr").includes("Solve")) {

@@ -185,7 +185,7 @@ export function loadGrammar() {
             errorElement.innerText = `Unexpected error: ${error}`
         }
         else {
-            errorElement.innerText = error.msg
+            errorElement.innerText = error.msg.replace(/`([^`]*)`/g,"<code>$1</code>")
             showMarkers(error.msg,
                 error.position ?? {
                     first: window.Interpreter.getStarting(error.range),

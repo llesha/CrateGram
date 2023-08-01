@@ -251,7 +251,7 @@ root =   welcome COMMA SPACE* subject punctuation !.
 
 welcome = ("Hello" | "Greetings" | "Salute") SPACE*
 subject = [A-Z][a-z]* SPACE*
-punctuation = [!?.] SPACE*
+punctuation = [.!?] SPACE*
 
 
 COMMA = "," 
