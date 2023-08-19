@@ -2,9 +2,9 @@ import { addTest, loadGrammar } from "./editor/placeholder.js";
 import { setTheme, updateFontSize, updateDebounce, updateAstView, setDotExceptions, unlock, unlockDependent } from "./loader.js";
 import * as utils from "./testInputs.js"
 
-const BLOCK_DELIMITER = "█████████████████████████████\n"
-const VALUE_DELIMITER = "░\n"
-const ANTI_CHEAT = "3"
+const BLOCK_DELIMITER = "█████████████████████████████"
+const VALUE_DELIMITER = "░"
+const NUM_HIDDEN_LAST_TESTS = "3"
 
 //#region click listeners
 document.getElementById("menu-button").onclick = () => {
@@ -116,12 +116,18 @@ function _setTask(e, child) {
 
 }
 
-function processGrammarTests(f) {
+function processGrammarTests(processLambda) {
     fetch(`..${_getSite()}/resources/test/${window.currentGrammarBlock}/${window.currentGrammar}-test.txt`)
         .then(f => f.text())
         .then(text => {
-            f(text)
+            let blocks = _splitByDelimiter(text, BLOCK_DELIMITER)
+            processLambda(blocks)
         })
+}
+
+function _splitByDelimiter(text, delimiter) {
+    var osDelimiter = text.includes("\r") ? delimiter + "\r\n" : delimiter + "\n"
+    return text.split(osDelimiter)
 }
 
 function _getSite() {
@@ -129,16 +135,15 @@ function _getSite() {
 }
 
 export function addGrammarExamples() {
-    processGrammarTests(text => {
-        let blocks = text.split(BLOCK_DELIMITER)
-        let valid = blocks[0].split(VALUE_DELIMITER).splice(0, 5)
+    processGrammarTests(blocks => {
+        let valid = _splitByDelimiter(blocks[0], VALUE_DELIMITER).splice(0, 5)
         for (const validElement of valid) {
             if (window?.myGrammar?.hasGrammar())
                 utils.addValueToTable(window.myGrammar.parse(validElement)[0], true, 0, validElement)
             else
                 utils.addValueToTable(null, true, 0, validElement)
         }
-        let invalidWithValidDictionary = blocks[1].split(VALUE_DELIMITER).splice(0, 5)
+        let invalidWithValidDictionary = _splitByDelimiter(blocks[1], VALUE_DELIMITER).splice(0, 5)
         for (const invalidElement of invalidWithValidDictionary) {
             if (window?.myGrammar?.hasGrammar())
                 utils.addValueToTable(window.myGrammar.parse(invalidElement)[0], false, 0, invalidElement)
@@ -228,11 +233,10 @@ dotExceptionsInput.parentElement.onclick = () => {
 currentTask.onclick = () => {
     if (currentTask.textContent == "Playground")
         return
-    processGrammarTests(text => {
-        let blocks = text.split(BLOCK_DELIMITER)
-        let valid = blocks[0].split(VALUE_DELIMITER)
-        let invalid = blocks[1].split(VALUE_DELIMITER)
-        let invalidWithInvalidDictionary = blocks[2].split(VALUE_DELIMITER)
+    processGrammarTests(blocks => {
+        let valid = _splitByDelimiter(blocks[0], VALUE_DELIMITER)
+        let invalid = _splitByDelimiter(blocks[1], VALUE_DELIMITER)
+        let invalidWithInvalidDictionary = _splitByDelimiter(blocks[2], VALUE_DELIMITER)
 
         // removing last '' elements which are created because of split
         valid.pop()
@@ -244,8 +248,8 @@ currentTask.onclick = () => {
         for (const validText of valid) {
             let result = window.myGrammar.parse(validText)[0]
             if (!result) {
-                if (iter + ANTI_CHEAT >= valid.length) {
-                    document.getElementById("error-test-text").textContent = `WA on one of hidden ${ANTI_CHEAT} tests`
+                if (iter + NUM_HIDDEN_LAST_TESTS >= valid.length) {
+                    document.getElementById("error-test-text").textContent = `WA on one of hidden ${NUM_HIDDEN_LAST_TESTS} tests`
                 } else
                     document.getElementById("error-test-text").textContent = `WA: '${validText}'`
                 return
