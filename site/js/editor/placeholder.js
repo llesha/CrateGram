@@ -199,7 +199,7 @@ export function loadGrammar() {
         if (errorElement.innerText.length > 38) {
             errorElement.innerHTML = errorElement.innerHTML.substring(0, 38) + "..."
         }
-        if (document.getElementById("grammar-type") != "task grammar")
+        if (document.getElementById("grammar-type").innerText != "task grammar")
             window.textEditor.updateOptions({
                 readOnly: true,
             });
