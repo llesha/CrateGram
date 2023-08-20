@@ -164,7 +164,7 @@ export function addPlaceholdersWithOnInput() {
 
 export function addTest() {
     if (currentTextInputStatus != null &&
-        (!myGrammarHasError || document.getElementById("grammar-type") == "task grammar"))
+        (!myGrammarHasError || document.getElementById("grammar-type").textContent == "task grammar"))
         addValueToTable(currentTextInputStatus?.[0], taskInputStatus?.[0], currentTextInputStatus?.[1], currentTextInput)
 }
 
@@ -185,7 +185,7 @@ export function loadGrammar() {
             errorElement.innerHTML = `Unexpected error: ${error}`
         }
         else {
-            errorElement.innerHTML = error.msg.replace(/`([^`]*)`/g,"<code>$1</code>")
+            errorElement.innerHTML = error.msg.replace(/`([^`]*)`/g, "<code>$1</code>")
             showMarkers(error.msg,
                 error.position ?? {
                     first: window.Interpreter.getStarting(error.range),
@@ -199,7 +199,7 @@ export function loadGrammar() {
         if (errorElement.innerText.length > 38) {
             errorElement.innerHTML = errorElement.innerHTML.substring(0, 38) + "..."
         }
-        if (document.getElementById("grammar-type").innerText != "task grammar")
+        if (document.getElementById("grammar-type").textContent != "task grammar")
             window.textEditor.updateOptions({
                 readOnly: true,
             });
