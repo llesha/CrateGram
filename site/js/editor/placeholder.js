@@ -64,7 +64,6 @@ var currentTextInputStatus = null
 var currentTextInput = null
 var taskInputStatus = null
 var decorations = []
-var myGrammarHasError = false
 
 function parseTask() {
     taskInputStatus = window.Interpreter.parse(currentTextInput)
@@ -163,15 +162,16 @@ export function addPlaceholdersWithOnInput() {
 }
 
 export function addTest() {
-    if (currentTextInputStatus != null &&
-        (!myGrammarHasError || document.getElementById("grammar-type").textContent == "task grammar"))
+    console.log(window.myGrammarHasError, currentTextInputStatus)
+    if ((currentTextInputStatus != null &&
+        !window.myGrammarHasError) || document.getElementById("grammar-type").textContent == "task grammar")
         addValueToTable(currentTextInputStatus?.[0], taskInputStatus?.[0], currentTextInputStatus?.[1], currentTextInput)
 }
 
 export function loadGrammar() {
     document.getElementById("spinner").style.display = "none"
     window.debounce = null;
-    myGrammarHasError = false;
+    window.myGrammarHasError = false;
     let value = editor.getValue()
     localStorage.setItem(window.currentGrammar, value)
     let errorElement = document.getElementById("grammar-error")
@@ -179,7 +179,7 @@ export function loadGrammar() {
         window.myGrammar.setGrammar(value)
     } catch (error) {
         window.myGrammar.clearGrammar()
-        myGrammarHasError = true
+        window.myGrammarHasError = true
         // console.log(error)
         if (error.msg == null) {
             errorElement.innerHTML = `Unexpected error: ${error}`
@@ -204,7 +204,7 @@ export function loadGrammar() {
                 readOnly: true,
             });
     } finally {
-        if (!myGrammarHasError) {
+        if (!window.myGrammarHasError) {
             errorElement.innerText = ""
             // errorElement.previousElementSibling.style.display = "none"
             // errorElement.nextElementSibling.style.display = "none"

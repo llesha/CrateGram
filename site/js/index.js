@@ -2,6 +2,7 @@ import { addTest, loadGrammar } from "./editor/placeholder.js";
 import { setTheme, updateFontSize, updateDebounce, updateAstView, setDotExceptions, unlock, unlockDependent } from "./loader.js";
 import * as utils from "./testInputs.js"
 
+window.myGrammarHasError = false
 const BLOCK_DELIMITER = "█████████████████████████████"
 const VALUE_DELIMITER = "░"
 const NUM_HIDDEN_LAST_TESTS = "3"
@@ -178,10 +179,19 @@ let grammarType = document.getElementById("grammar-type")
 grammarType.onclick = () => {
     if (grammarType.innerText == "my grammar") {
         grammarType.innerText = "task grammar"
+        window.textEditor.updateOptions({
+            readOnly: false,
+        })
+        return
     } else if (grammarType.innerText == "task grammar") {
         grammarType.innerText = "both grammars"
     } else {
         grammarType.innerText = "my grammar"
+    }
+    if (window.myGrammarHasError) {
+        window.textEditor.updateOptions({
+            readOnly: true,
+        })
     }
 }
 
