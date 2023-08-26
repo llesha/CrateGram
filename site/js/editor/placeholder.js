@@ -71,7 +71,15 @@ function parseTask() {
 
 function parseMyGrammar() {
     if (window.myGrammar.hasGrammar()) {
-        currentTextInputStatus = window.myGrammar.parse(currentTextInput)
+        try {
+            currentTextInputStatus = window.myGrammar.parse(currentTextInput)
+        } catch (e) {
+            let errorElement = document.getElementById("grammar-error")
+            let message = e instanceof RangeError ?
+                `Stack overflow error. Might be a problem with empty strings or cyclic references.` :
+                `Unexpected error: ${error}`
+            showError(errorElement, message)
+        }
     }
 }
 
@@ -162,7 +170,6 @@ export function addPlaceholdersWithOnInput() {
 }
 
 export function addTest() {
-    console.log(window.myGrammarHasError, currentTextInputStatus)
     if ((currentTextInputStatus != null &&
         !window.myGrammarHasError) || document.getElementById("grammar-type").textContent == "task grammar")
         addValueToTable(currentTextInputStatus?.[0], taskInputStatus?.[0], currentTextInputStatus?.[1], currentTextInput)
@@ -180,25 +187,18 @@ export function loadGrammar() {
     } catch (error) {
         window.myGrammar.clearGrammar()
         window.myGrammarHasError = true
-        // console.log(error)
-        if (error.msg == null) {
-            errorElement.innerHTML = `Unexpected error: ${error}`
-        }
+        if (error.msg == null)
+            showError(errorElement, `Unexpected error: ${error}`)
         else {
-            errorElement.innerHTML = error.msg.replace(/`([^`]*)`/g, "<code>$1</code>")
-            showMarkers(error.msg,
+            let message = showError(errorElement, error.msg)
+            showMarkers(message,
                 error.position ?? {
                     first: window.Interpreter.getStarting(error.range),
                     second: window.Interpreter.getEnding(error.range)
                 },
                 window.editor)
         }
-        errorElement.setAttribute("descr", errorElement.innerHTML)
-        // errorElement.previousElementSibling.style.display = "inline"
-        // errorElement.nextElementSibling.style.display = "inline"
-        if (errorElement.innerText.length > 38) {
-            errorElement.innerHTML = errorElement.innerHTML.substring(0, 38) + "..."
-        }
+
         if (document.getElementById("grammar-type").textContent != "task grammar")
             window.textEditor.updateOptions({
                 readOnly: true,
@@ -231,4 +231,14 @@ function showMarkers(msg, range, editor) {
         endLineNumber: end.lineNumber,
         endColumn: end.column,
     }])
+}
+
+function showError(errorElement, message) {
+    let res = message.replace(/`([^`]*)`/g, "<code>$1</code>")
+    errorElement.innerHTML = res
+    errorElement.setAttribute("descr", errorElement.innerHTML)
+    if (errorElement.innerText.length > 38) {
+        errorElement.innerHTML = errorElement.innerHTML.substring(0, 38) + "..."
+    }
+    return res
 }
